@@ -1,28 +1,19 @@
-## Usage
+## kino.wtf - A daily game for film buffs. 
 
-```bash
-$ npm install # or pnpm install or yarn install
-```
+### About
+[kino.wtf](https://kino.wtf) is a worlde-like game where you guess the daily movie based on its cast. 
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+### How to play
+- Use the hints provided to guess a film.
+- If you guess incorrectly, another actor from the film will be revealed.
+- Leave the input blank to skip a guess and get the next hint.
+- You have 6 attempts to guess the film.
 
-## Available Scripts
+### Credits
+- Curated list of movies comes from the IMDb list [framed.wtf movies](https://www.imdb.com/list/ls567944175/)
+- Metadata needed for each film scraped using the [TMDb API](https://developer.themoviedb.org/reference/intro/getting-started)
+- Inspired by [Wordle](https://www.nytimes.com/games/wordle/index.html), [Framed](https://framed.wtf) and [all the other spinoffs](https://rwmpelstilzchen.gitlab.io/wordles/).
 
-In the project directory, you can run:
-
-### `npm run dev`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
-
-### `npm run build`
-
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-## Deployment
-
-Learn more about deploying your application with the [documentations](https://vitejs.dev/guide/static-deploy.html)
+### Tools used
+- Built using [solid.js](https://solidjs.com) and [tailwindcss](https://tailwindcss.com)
+- Deployed on [vercel](https://vercel.app)
