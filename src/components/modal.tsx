@@ -40,7 +40,6 @@ function Modal({ children, Icon, title }: { children:any , Icon?:any, title:stri
                 
                 <div class="flex text-sm text-primary-300 m-4 gap-2 justify-between">
                   <p>Made by <a target="_blank" href="https://kaischuyler.com">Kai Schuyler</a></p>
-                  <a target="_blank" href="https://www.buymeacoffee.com/kaischuyler">Buy me a coffee</a>
                 </div>
               </div>
             </div>

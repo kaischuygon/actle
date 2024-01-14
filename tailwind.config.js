@@ -16,6 +16,10 @@ export default {
 				primary: primary,
 				accent: accent
 			},
+      fontFamily: {
+        display: ['Rubik Mono One', ...defaultTheme.fontFamily.sans],
+        sans: ['Rubik', ...defaultTheme.fontFamily.sans],
+      },
       typography: () => ({
         accent: {
           css: {
