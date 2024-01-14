@@ -9,9 +9,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "solid-js": "^1.8.7"
+    "@iconify-json/bx": "^1.1.10",
+    "@iconify/json": "^2.2.168",
+    "@tailwindcss/typography": "^0.5.10",
+    "solid-js": "^1.8.7",
+    "unplugin-icons": "^0.18.2"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.33",
+    "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
     "vite-plugin-solid": "^2.8.0"
