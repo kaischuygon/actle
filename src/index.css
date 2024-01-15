@@ -11,3 +11,24 @@ a {
 *:focus {
   @apply outline outline-accent-300 outline-1;
 }
+
+/* .movieSelect.solid-select-container {
+  @apply w-full p-2 bg-primary-800 text-primary-100 mx-auto block rounded;
+} */
+
+.movieSelect .solid-select-container {
+  @apply w-full p-2 bg-primary-800 text-primary-100 mx-auto block rounded;
+}
+
+.movieSelect .solid-select-control {
+  /* @apply bg-primary-900 p-2; */
+}
+.movieSelect .solid-select-option {
+  @apply p-2;
+}
+.movieSelect .solid-select-option:hover {
+  @apply bg-primary-800;
+}
+.movieSelect .solid-select-option[data-focused=true] {
+  @apply bg-primary-800;
+}

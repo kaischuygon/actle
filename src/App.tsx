@@ -7,17 +7,27 @@ import InfoIcon from "~icons/bx/bxs-book-open"
 import GitHubIcon from "~icons/bx/bxl-github"
 import logo from "./assets/kino.svg"
 
+import movies from '../movie_notebook/movies.json'
+import { Select, createOptions } from "@thisbeyond/solid-select";
+// Import default styles. (All examples use this via a global import)
+import "@thisbeyond/solid-select/style.css";
 
-const FILM = "The Matrix"
+// Get all movie names
+const movieNames = movies.map(movie => movie.Name)
 
-const HINTS = [
-  'Keanu Reeves',
-  'Laurence Fishburne',
-  'Carrie-Anne Moss',
-  'Hugo Weaving',
-  'Lana Wachowski',
-  'Lilly Wachowski'
-]
+export const MovieSelect = () => {
+  const props = createOptions(movieNames);
+  return <Select {...props} class="movieSelect" />;
+};
+
+// Choose movie based on client date
+const date = new Date()
+const day = date.getDate()
+const movie = movies[day % movies.length]
+
+// Set the film and hints
+const FILM = movie.Name
+const HINTS = movie.Actors
 
 function App() {
   const [guesses, setGuesses] = createSignal<number>(0)
@@ -110,12 +120,13 @@ function App() {
               </For>
         
               <hr class="border-accent-400" />
-              <input
+              {/* <input
                 type="text"
                 class="w-full p-2 bg-primary-800 text-primary-100 mx-auto block rounded"
                 placeholder="🍿 Guess a movie..."
                 onkeypress={makeGuess()}
-              />
+              /> */}
+              <MovieSelect />
             </>
           }>
             <div class="p-2 bg-primary-800 rounded text-center w-full shadow">
