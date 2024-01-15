@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Noto+Color+Emoji&family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -20,15 +20,18 @@ a {
   @apply w-full p-2 bg-primary-800 text-primary-100 mx-auto block rounded;
 }
 
-.movieSelect .solid-select-control {
-  /* @apply bg-primary-900 p-2; */
+.solid-select-list {
+  @apply outline outline-1 outline-accent-300 rounded h-48 overflow-y-auto w-full overflow-x-clip;
 }
+
 .movieSelect .solid-select-option {
-  @apply p-2;
+  @apply p-2 w-full break-words;
 }
+
 .movieSelect .solid-select-option:hover {
   @apply bg-primary-800;
 }
+
 .movieSelect .solid-select-option[data-focused=true] {
   @apply bg-primary-800;
 }

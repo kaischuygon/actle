@@ -1,60 +1,103 @@
-import { Show, For } from "solid-js"
+import { Show, For, createEffect, on } from "solid-js"
 import { createSignal } from "solid-js";
 
 import Modal from "./components/modal"
+import MovieSelect from "./components/movieSelect"
 import AboutIcon from "~icons/bx/bxs-info-circle"
 import InfoIcon from "~icons/bx/bxs-book-open"
-import GitHubIcon from "~icons/bx/bxl-github"
-import logo from "./assets/kino.svg"
 
 import movies from '../movie_notebook/movies.json'
-import { Select, createOptions } from "@thisbeyond/solid-select";
-// Import default styles. (All examples use this via a global import)
-import "@thisbeyond/solid-select/style.css";
-
-// Get all movie names
-const movieNames = movies.map(movie => movie.Name)
-
-export const MovieSelect = () => {
-  const props = createOptions(movieNames);
-  return <Select {...props} class="movieSelect" />;
-};
-
-// Choose movie based on client date
-const date = new Date()
-const day = date.getDate()
-const movie = movies[day % movies.length]
-
-// Set the film and hints
-const FILM = movie.Name
-const HINTS = movie.Actors
 
 function App() {
-  const [guesses, setGuesses] = createSignal<number>(0)
+  const [guess, setGuess] = createSignal<string>("")
+  const [guesses, setGuesses] = createSignal<string[]>([])
   const [success, setSuccess] = createSignal<boolean>(false)
 
-  function makeGuess() {
-    return (e: KeyboardEvent) => {
-      if (e.key === "Enter") {
-        const input = e.target as HTMLInputElement;
-        const guess = input.value.toLowerCase();
+  createEffect(on(guess, () => {
+    setGuesses(prev => [...prev, guess()]);
 
-        setGuesses((prev: number) => {
-          return prev + 1;
-        });
+    if (guess() === FILM.toLowerCase()) {
+      setSuccess(true);
+    }
+  }));
 
-        if (guess === FILM.toLowerCase()) {
-          setSuccess(true);
-        }
+  // Get all movie names
+  const movieNames = movies.map(movie => movie.Name + " (" + movie.Year + ")").sort()
 
-        if (guesses() == 6) {
-          input.disabled = true;
-          input.placeholder = "Better luck next time 😢";
-        }
+  // Choose movie based on client date
+  const date = new Date()
+  const day = date.getDate()
+  const movie = movies[day % movies.length]
 
-        input.value = "";
-      }
-    };
+  // Set the film and hints
+  const FILM = movie.Name
+  const HINTS = movie.Actors
+
+  const About = () => {
+    return <>
+      <p>
+        A game for film buffs and casual moviegoers alike. Inspired by wordle, but for movies.
+      </p>
+      <p>
+        Each day a new movie is chosen from a curated list, and the hints are based on the top 6 actors provided by the <a target="_blank" href="https://developer.themoviedb.org/reference/intro/getting-started">TMDB API</a>.
+      </p>
+      <p>
+        Built with <a target="_blank" href="https://solidjs.com/">SolidJS</a> and <a target="_blank" href="https://tailwindcss.com/">Tailwind CSS</a>.
+      </p>
+    </>
+  }
+
+  const Instructions = () => {
+    return <>
+      <ul>
+        <li>
+          Use the hints provided to guess a film.
+        </li>
+        <li>
+          If you guess incorrectly, another actor from the film will be revealed.
+        </li>
+        <li>
+          Leave the input blank to skip a guess and get the next hint.
+        </li>
+        <li>
+          You have 6 attempts to guess the film.
+        </li>
+      </ul>
+    </>
+  }
+
+  const Guesses = () => {
+    return <div class="flex flex-wrap gap-2">
+      <For each={guesses()}>
+        {(guess) => {
+          return (
+            <div class="p-2 bg-primary-700 rounded text-center shadow">
+              <p>{guess}</p>
+            </div>
+          );
+        }}
+      </For>
+    </div>
+  }
+  
+  const Success = () => {
+    return <>
+      <div class="p-2 bg-primary-800 rounded text-center w-full shadow">
+        🎉 You got it!
+      </div>
+      <p>Your guesses: </p>
+      <Guesses />
+    </>
+  }
+
+  const Failure = () => {
+    return <>
+      <div class="p-2 bg-primary-800 rounded text-center w-full shadow">
+        The answer was {FILM}. 😢 Better luck next time!
+      </div>
+      <p>Your guesses: </p>
+      <Guesses />
+    </>
   }
 
   return (
@@ -62,49 +105,28 @@ function App() {
       <div class="w-screen h-screen overflow-hidden bg-primary-900 text-primary-100">
         <div class="p-2 w-full md:w-1/2 xl:w-1/3 mx-auto flex flex-col gap-4">
           <div class="flex items-center gap-2">
-            <img src={logo} class="h-8" />
-            <h1 class="text-4xl font-bold text-center text-accent-400 font-display">kino</h1>
+            <h1 class="text-4xl font-bold text-center text-accent-400 font-display">
+              <span class="font-emoji">📼</span> KINO
+            </h1>
             <div class="flex gap-2 justify-center items-center ml-auto">
-              <a target="_blank" href="https://github.com/kaischuygon/actle"><GitHubIcon class="text-lg text-primary-100" /></a>
               <Modal Icon={AboutIcon} title="About" >
-                <p>
-                  A game for film buffs and casual moviegoers alike. Inspired by wordle, but for movies.
-                </p>
-                <p>
-                  Each day a new movie is chosen from a curated list, and the hints are based on the top 6 actors provided by the <a target="_blank" href="https://developer.themoviedb.org/reference/intro/getting-started">TMDB API</a>.
-                </p>
-                <p>
-                  All rights go to the rightful owners, this is just a fun project.
-                </p>
+                <About />
               </Modal>
               <Modal Icon={InfoIcon} title="How to play">
-                <ul>
-                  <li>
-                    Use the hints provided to guess a film.
-                  </li>
-                  <li>
-                    If you guess incorrectly, another actor from the film will be revealed.
-                  </li>
-                  <li>
-                    Leave the input blank to skip a guess and get the next hint.
-                  </li>
-                  <li>
-                    You have 6 attempts to guess the film.
-                  </li>
-                </ul>
+                <Instructions />
               </Modal>
             </div>
           </div>
-          
+
           <hr class="border-accent-400"/>
 
-          <Show when={guesses() == 6 || success() == true} fallback={
+          <Show when={guesses().length == 6 || success() == true} fallback={
             <>
               <For each={HINTS}>
                 {(hint, i) => {
                   return (
                     <Show
-                      when={i() <= guesses()}
+                      when={i() < guesses().length}
                       fallback={
                         <div class="p-2 bg-primary-800 rounded text-center w-full shadow">
                           <p>...</p>
@@ -120,22 +142,14 @@ function App() {
               </For>
         
               <hr class="border-accent-400" />
-              {/* <input
-                type="text"
-                class="w-full p-2 bg-primary-800 text-primary-100 mx-auto block rounded"
-                placeholder="🍿 Guess a movie..."
-                onkeypress={makeGuess()}
-              /> */}
-              <MovieSelect />
+              <MovieSelect guess={guess} setGuess={setGuess} options={movieNames} />
             </>
           }>
-            <div class="p-2 bg-primary-800 rounded text-center w-full shadow">
-              {
-                success() == true ?
-                  <p>🎉 You got it!</p> :
-                  <p>The answer was {FILM}. 😢 Better luck next time!</p>
-              }
-            </div>
+            {
+              success() == true ?
+                <Success /> :
+                <Failure />
+            }
           </Show>
         </div>
       </div>

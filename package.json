@@ -13,6 +13,7 @@
     "@iconify/json": "^2.2.168",
     "@tailwindcss/typography": "^0.5.10",
     "@thisbeyond/solid-select": "^0.14.0",
+    "fuse.js": "^7.0.0",
     "solid-js": "^1.8.7",
     "solid-select": "^0.0.1",
     "unplugin-icons": "^0.18.2"
