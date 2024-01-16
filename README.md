@@ -10,10 +10,10 @@
 - You have 6 attempts to guess the film.
 
 ### Credits
-- Curated list of movies comes from the IMDb list [framed.wtf movies](https://www.imdb.com/list/ls567944175/)
-- Metadata needed for each film scraped using the [TMDb API](https://developer.themoviedb.org/reference/intro/getting-started)
+- Curated list of movies comes from the letterboxd list [comprehensive framed.wtf film list](https://letterboxd.com/tispe/list/comprehensive-framedwtf-film-list/)
+- Metadata needed for each film scraped using the [TMDb API](https://developer.themoviedb.org/reference/intro/getting-started).
 - Inspired by [Wordle](https://www.nytimes.com/games/wordle/index.html), [Framed](https://framed.wtf) and [all the other spinoffs](https://rwmpelstilzchen.gitlab.io/wordles/).
 
 ### Tools used
-- Built using [solid.js](https://solidjs.com) and [tailwindcss](https://tailwindcss.com)
-- Deployed on [vercel](https://vercel.app)
+- Built using [solid.js](https://solidjs.com) and [tailwindcss](https://tailwindcss.com).
+- Deployed on [vercel](https://vercel.app).

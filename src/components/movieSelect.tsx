@@ -2,6 +2,11 @@ import { Accessor, Component, createEffect, createMemo, createSignal, For, JSX, 
 
 import Fuse from 'fuse.js'
 
+function cleanText(input:string) {
+  let decoder = new TextDecoder('utf-8');
+  return decoder.decode(new Uint8Array(input.split('').map(c => c.charCodeAt(0))));
+}
+
 const MovieSelect: Component<{
   guess: Accessor<string>,
   setGuess: Setter<string>,
@@ -10,6 +15,9 @@ const MovieSelect: Component<{
   const [text, setText] = createSignal('');
   const [show, setShow] = createSignal(false);
   const [selected, setSelected] = createSignal(0);
+
+  // Clean options array
+  props.options = props.options.map(cleanText);
 
   // Super simple fuzzy search using fuse.js
   const fuse = new Fuse(props.options, {threshold: 0.2})
@@ -54,6 +62,18 @@ const MovieSelect: Component<{
     setShow(true);
   }
 
+  let blurTimeout: number;
+
+  const handleBlur = () => {
+    // Delay hiding the list by 200ms
+    blurTimeout = setTimeout(() => setShow(false), 200);
+  };
+
+  const handleFocus = () => {
+    // Cancel the hiding if the user focuses back on the input quickly
+    clearTimeout(blurTimeout);
+  };
+
   return (
     <div>
       <input
@@ -63,14 +83,26 @@ const MovieSelect: Component<{
         value={text()}
         onInput={handleInput}
         onKeyDown={handleKeydown}
-        onBlur={() => setShow(false)}
+        onBlur={handleBlur} // Use handleBlur instead of inline function
+        onFocus={handleFocus} // Add onFocus event handler
         id='movieSelectInput'
       />
       <Show when={isVisible()}>
         <ul class="outline outline-1 outline-accent-300 rounded max-h-48 overflow-y-auto w-full overflow-x-clip">
-          <For each={filteredOptions()}>
-            {(item, i) => <li class={ selected() === i() ? 'p-2 bg-primary-700': 'p-2'}>{item}</li>}
-          </For>
+        <For each={filteredOptions()}>
+          {(item, i) => (
+            <li 
+              class={ selected() === i() ? 'p-2 bg-primary-700': 'p-2'}
+              onMouseOver={() => setSelected(i)} // set selected item on hover
+              onClick={() => { // change 'onclick' to 'onClick'
+                setText(filteredOptions()[i()]);
+                props.setGuess(text());
+              }}
+            >
+              {item}
+            </li>
+          )}
+        </For>
         </ul>
       </Show>
     </div>

@@ -614,11 +614,6 @@
     lodash.merge "^4.6.2"
     postcss-selector-parser "6.0.10"
 
-"@thisbeyond/solid-select@^0.14.0":
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/@thisbeyond/solid-select/-/solid-select-0.14.0.tgz#1f6ed9e2c54818a13943624f4a66e32d5c933062"
-  integrity sha512-ecq4U3Vnc/nJbU84ARuPg2scNuYt994ljF5AmBlzuZW87x43mWiGJ5hEWufIJJMpDT6CcnCIx/xbrdDkaDEHQw==
-
 "@types/babel__core@^7.20.4":
   version "7.20.5"
   resolved "https://registry.npmjs.org/@types/babel__core/-/babel__core-7.20.5.tgz"
@@ -1638,11 +1633,6 @@ solid-refresh@^0.5.3:
     "@babel/generator" "^7.21.1"
     "@babel/helper-module-imports" "^7.18.6"
     "@babel/types" "^7.21.2"
-
-solid-select@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/solid-select/-/solid-select-0.0.1.tgz#bc378b4e49ef87c83721732f298f0608dc682fcf"
-  integrity sha512-/OaWORWmI8zpXAFkxL20keGesCDK6GU6ova178xljiBTxOIFFlJpgdOT45sk7YpNKGB0AUnFz6+hI6i/1aJiyA==
 
 source-map-js@^1.0.2:
   version "1.0.2"
