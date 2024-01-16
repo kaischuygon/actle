@@ -135,6 +135,9 @@ function App() {
     for (let i = 0; i < 6 - guesses().length; i++) {
       result += '⬛'
     }
+
+    result = `📼 Kino ﹟ ${day % movies.length + 1}\n ${result}`
+
     const shareData = {
       title: '📼 Kino ﹟' + (day % movies.length + 1),
       text: result,
@@ -148,8 +151,7 @@ function App() {
     } else {
       console.log('Web Share API not supported in your browser')
       // Fallback to copy to clipboard
-      const result = shareData.title + '\n' + shareData.text + '\n' + shareData.url
-      navigator.clipboard.writeText(result)
+      navigator.clipboard.writeText(result + '\n\n' + shareData.url)
         .then(() => {
           console.log('Copied to clipboard')
           alert('Copied result to clipboard')
