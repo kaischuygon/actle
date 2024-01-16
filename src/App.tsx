@@ -373,7 +373,7 @@ function App() {
           </Show>
 
           <hr class="border-accent-400" />
-          <div class="flex text-xs text-primary-300 m-2 gap-2 justify-center">
+          <div class="flex flex-wrap text-xs text-primary-300 m-2 gap-2 justify-center">
             <p>© 2023 <a target="_blank" href="https://kaischuyler.com">Kai Schuyler</a></p>
             <span>·</span>
             <span>
@@ -387,6 +387,12 @@ function App() {
               <GitHubIcon class="text-primary-100 inline mr-1" />
               <a target="_blank" href="https://github.com/kaischuygon/kino.wtf">
                 source
+              </a>
+            </span>
+            <span>·</span>
+            <span class="inline">
+              <a target="_blank" href="https://github.com/kaischuygon/kino.wtf/issues">
+                issues?
               </a>
             </span>
           </div>
