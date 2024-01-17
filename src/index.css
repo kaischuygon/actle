@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  @apply bg-primary-900;
+}
+
 a {
   @apply text-accent-400 underline;
 }

@@ -141,7 +141,7 @@ function App() {
       result += '⬛'
     }
 
-    result = `📼 Kino ﹟ ${day % movies.length + 1}\n ${result} \n https://www.kino.wtf`
+    result = `📼 Kino ﹟ ${day % movies.length + 1}\n ${result}`
 
     const shareData = {
       title: '📼 Kino ﹟' + (day % movies.length + 1),
@@ -156,7 +156,7 @@ function App() {
     } else {
       console.log('Web Share API not supported in your browser')
       // Fallback to copy to clipboard
-      navigator.clipboard.writeText(result)
+      navigator.clipboard.writeText(result + '\n https://www.kino.wtf')
         .then(() => {
           console.log('Copied to clipboard')
           button!.innerHTML = 'Copied!'
@@ -352,24 +352,24 @@ function App() {
    */
   const InProgress = () => {
     return (
-      <div class="flex flex-col justify-between w-full h-full gap-2">
+      <div class="flex flex-col w-full h-full gap-2">
         <For each={MOVIE.Actors}>
           {(hint, i) => {
             return (
               <Show
                 when={i() <= guesses().length}
                 fallback={
-                  <button class="p-2 bg-primary-800 rounded text-center w-full shadow h-full" disabled>
+                  <button class="hidden md:block p-2 bg-primary-800 rounded text-center w-full shadow md:h-full" disabled>
                     ...
                   </button>
                 }
               >
                 <Show when={hint['image'] == poster()} fallback={
-                    <button class="p-2 bg-primary-700 rounded text-center w-full shadow h-full hover:brightness-75" onclick={changePoster(i())}>
+                    <button class="p-2 bg-primary-700 rounded text-center w-full shadow hover:brightness-75 md:h-full" onclick={changePoster(i())}>
                       {hint['name']}
                     </button>
                 }>
-                  <button class="p-2 bg-accent-400 text-primary-900 rounded text-center w-full shadow h-full hover:brightness-75" onclick={changePoster(i())}>
+                  <button class="p-2 bg-accent-400 text-primary-900 rounded text-center w-full shadow hover:brightness-75 md:h-full" onclick={changePoster(i())}>
                     {hint['name']}
                   </button>
                 </Show>
@@ -485,7 +485,7 @@ function App() {
 
   return (
     <>
-      <div class="w-screen h-screen bg-primary-900 text-primary-100">
+      <div class="w-screen bg-primary-900 text-primary-100">
         <div class="p-2 max-w-screen-sm 2xl:1/3 mx-auto flex flex-col gap-4">
           <div class="flex items-center gap-2">
             <h1 class="text-4xl font-bold text-center text-accent-400 font-display">
