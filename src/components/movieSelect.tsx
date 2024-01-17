@@ -52,9 +52,9 @@ const MovieSelect: Component<{
 
   const handleKeydown: JSX.EventHandler<HTMLInputElement, KeyboardEvent> = (event) => {
     if (event.code === 'ArrowUp') {
-      setSelected(prev => prev === 0 ? (filteredOptions().length - 1) : prev - 1);
-    } else if (event.code === 'ArrowDown') {
       setSelected(prev => prev + 1 === filteredOptions().length ? 0 : prev + 1);
+    } else if (event.code === 'ArrowDown') {
+      setSelected(prev => prev === 0 ? (filteredOptions().length - 1) : prev - 1);
     } else if (event.code === 'Tab') {
       let input = document.getElementById('movieSelectInput') as HTMLInputElement;
       input.value = sanitizeText(filteredOptions()[selected()]);
@@ -81,20 +81,9 @@ const MovieSelect: Component<{
   };
 
   return (
-    <div>
-      <input
-        type="text"
-        placeholder="🍿 Guess a movie..."
-        class="w-full p-2 bg-primary-800 text-primary-100 mx-auto block rounded placeholder:font-emoji"
-        value={text()}
-        onInput={handleInput}
-        onKeyDown={handleKeydown}
-        onBlur={handleBlur} // Use handleBlur instead of inline function
-        onFocus={handleFocus} // Add onFocus event handler
-        id='movieSelectInput'
-      />
+    <div class="relative">
       <Show when={isVisible()}>
-        <ul class="outline outline-1 outline-accent-300 rounded max-h-48 overflow-y-auto w-full overflow-x-clip" id='options'>
+        <ul class="flex flex-col-reverse outline outline-1 outline-accent-300 rounded-t max-h-48 overflow-y-auto w-full overflow-x-clip bg-primary-950 absolute bottom-full" id='options'>
         <For each={filteredOptions()}>
           {(item, i) => (
             <li 
@@ -111,6 +100,17 @@ const MovieSelect: Component<{
         </For>
         </ul>
       </Show>
+      <input
+        type="text"
+        placeholder="🍿 Guess a movie..."
+        class="w-full p-2 bg-primary-800 text-primary-100 mx-auto block rounded placeholder:font-emoji"
+        value={text()}
+        onInput={handleInput}
+        onKeyDown={handleKeydown}
+        onBlur={handleBlur} // Use handleBlur instead of inline function
+        onFocus={handleFocus} // Add onFocus event handler
+        id='movieSelectInput'
+      />
     </div>
   );
 };
