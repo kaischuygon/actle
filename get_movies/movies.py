@@ -1,13 +1,12 @@
 """
-    Helper script to scrape the Letterboxd website for the movie's TMDb ID and then get the movie's details from TMDb.
+    This script scrapes the top rated films in the US region from TMDb and exports the data to a JSON file for the web app to use.
 
-    Returns:
-        movies_with_actors.csv - a CSV file containing the movie's name, year, URL, TMDb ID, actors, and poster
-        movies.json - a JSON file containing the movie's name, year, URL, TMDb ID, actors, and poster (used by the web app)
+    Creates:
+        movies.json - a JSON file containing the movie's name, year, URL, TMDb ID, actors, and poster
 
 
     Install dependencies:
-        pip install pandas numpy requests beautifulsoup4 python-dotenv tqdm
+        pip install numpy requests python-dotenv tqdm
 
     Usage:
         python movies.py
@@ -15,27 +14,22 @@
     Optional arguments:
         --limit - an integer for the limit of movies to scrape
             python movies.py --limit 10
-        --file - a path to a CSV file containing the movies to scrape. See movies.csv for an example
 
 """
 
-import pandas as pd
 import numpy as np
 import requests
-from bs4 import BeautifulSoup
 import os
 from dotenv import load_dotenv
 import json
 import logging
-from tqdm import tqdm
+import concurrent.futures
 import argparse
 
 # Create a parser
 parser = argparse.ArgumentParser(description='Process some integers.')
 # Add the 'limit' argument
 parser.add_argument('--limit', type=int, help='an integer for the limit')
-# Add the 'file' argument
-parser.add_argument('--file', type=str, help='a path to a CSV file containing the movies to scrape')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -76,103 +70,77 @@ logger.addHandler(ch)
 load_dotenv()
 TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 
-def get_tmdb_ids(movies):
-    '''Scrape the Letterboxd website for the movie's TMDb ID'''
-    logger.info("Scraping Letterboxd for TMDb IDs")
-    movies['TMDb ID'] = -1
+def get_movies_from_page(page:int):
+    """
+        Gets the movies from a page of the top rated movies from TMDb
 
-    # Loop through the movies and scrape the TMDb ID
-    for index, row in tqdm(movies.iterrows(), total=movies.shape[0]):
-        # Skip movies that already have a TMDb ID
-        if row['TMDb ID'] != -1:
-            continue
-        
-        # Get the movie's Letterboxd URL
-        url = row['URL'] + '/details'
-        # Get the movie's TMDb ID
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, 'html.parser')
-        body = soup.find('body')
-        tmdb_id = body.get('data-tmdb-id')
-        # Add the TMDb ID to the dataframe
-        movies.at[index, 'TMDb ID'] = int(tmdb_id)
+        Args:
+            page (int): the page number
+
+        Returns:
+            list: a list of movie objects
+    """
+    movies = []
+    logger.info(f"Getting page {page}")
+    # TMDb /discover endpoint https://developer.themoviedb.org/reference/discover-movie
+    url = f"https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page={page}&region=US&sort_by=vote_count.desc"
+
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1MWQ4Yzk5ODg0ZDk4MmZiMDEyNDdjM2ZjYzhlOWM5NiIsInN1YiI6IjYxZmI4NDljNjRkZTM1MDBlMTBhODQwMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.SyIl_ulBWBG8FiApEUfcn5JhoHIk64i6VYWjNgcWQ-M"
+    }
+
+    response = requests.get(url, headers=headers)
     
-    if movies['TMDb ID'].isnull().any():
-        logger.warning(f"{movies['Actors'].isnull().count()} movies do not have a TMDb ID")
-
-    logger.info("Finished scraping Letterboxd for TMDb IDs")
-
-def get_movie_details(movies):
-    '''Get the movie's details from TMDb'''
-    movies['Actors'] = [[] for _ in range(len(movies))]
-    movies['Poster'] = ''
-
-    # Loop through the movies and get the movie's details
-    for index, row in tqdm(movies.iterrows(), total=movies.shape[0]):
-        # Skip movies that already have actors listed
-        if len(row['Actors']) > 0:
-            continue
-
-        # Get the movie's TMDb ID
-        tmdb_id = row['TMDb ID']
-        
-        # Get the movie's cast
-        url = f"https://api.themoviedb.org/3/movie/{tmdb_id}/credits?language=en-US"
-        headers = {
-            "accept": "application/json",
-            "Authorization": f"Bearer {TMDB_API_KEY}"
-        }
-
-        response = requests.get(url, headers=headers)
+    data = json.loads(response.text)
+    results = data['results']
+    for result in results:
+        cast = []
+        casturl = f"https://api.themoviedb.org/3/movie/{result['id']}/credits?language=en-US"
+        response = requests.get(casturl, headers=headers)
         data = json.loads(response.text)
         cast = data['cast']
-        # limit to 6 actors
-        cast = cast[:6]
-        # Add the cast to the dataframe as a list of 6 actor names
-        movies.at[index, 'Actors'] = [actor['name'] for actor in cast]
+        cast = [{'name': actor['name'], 'image': f"https://image.tmdb.org/t/p/w500{actor['profile_path']}"} for actor in cast]
+        movie_obj ={
+            'Name': result['title'],
+            'Year': int(result['release_date'][:4]),
+            'URL': f'https://themoviedb.org/movie/{result["id"]}',
+            'TMDb ID': result['id'],
+            'Actors': cast[:6], # get max the first 6 actors
+            'Poster': f"https://image.tmdb.org/t/p/w500{result['poster_path']}"
+        }
 
-        # Get poster image
-        url = f'https://api.themoviedb.org/3/movie/{tmdb_id}/images?language=en'
-        response = requests.get(url, headers=headers)
-        data = json.loads(response.text)
-        poster = data['posters'][0]['file_path']
-        # Add the poster to the dataframe
-        movies.at[index, 'Poster'] = f'https://image.tmdb.org/t/p/w500{poster}'
+        movies.append(movie_obj)
+    
+    return movies
 
-    if movies['Actors'].isnull().any():
-        logger.warning(f"{movies['Actors'].isnull().count()} movies do not have actors")
-    if movies['Poster'].isnull().any():
-        logger.warning(f"{movies['Actors'].isnull().count()} movies do not have a poster")
-
-    movies.head()
+def get_top_rated_movies(limit:int = 5):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        pages = list(range(1, limit + 1))
+        results = executor.map(get_movies_from_page, pages)
+    
+    # flatten the list of lists
+    movies = [movie for page in results for movie in page]
+    return movies
 
 # main function
 if __name__ == "__main__":
-    logger.info(f"Loading {args.file if args.file else 'movies.csv'}")
-    # Load the movies.csv file, up to args.limit
-    if args.limit is not None:
-        movies = pd.read_csv(args.file if args.file else 'movies.csv', sep=',', encoding='latin-1', usecols=['Name', 'Year', 'URL'], nrows=args.limit)
+    logger.info("Starting to scrape pages")
+    if args.limit:
+        logger.info(f"Limiting to {args.limit} pages")
+        movies = get_top_rated_movies(int(args.limit))
     else:
-        movies = pd.read_csv(args.file if args.file else 'movies.csv', sep=',', encoding='latin-1', usecols=['Name', 'Year', 'URL'])
-    
-    get_tmdb_ids(movies)
-    get_movie_details(movies)
-    
-    movies_json = movies.to_json(orient='records')
-    parsed = json.loads(movies_json)
+        movies = get_top_rated_movies()
 
     # randomize the order of the movies
     logger.info("Randomizing the order of the movies")
-    np.random.shuffle(parsed)
-    movies_json = json.dumps(parsed, indent=4, sort_keys=True)
+    np.random.shuffle(movies)
+    movies_json = json.dumps(movies, indent=4, sort_keys=True)
 
     logger.info("Exporting movies.json")
     # export the json object to a file
     with open('movies.json', 'w') as outfile:
         outfile.write(movies_json)
 
-    # print the dataframe if limit is set
-    if args.limit is not None:
-        print(movies.head(args.limit))
-    else:
-        print(movies.head())
+    logger.info("Sucessfully scraped {} movies".format(len(movies)))
+        

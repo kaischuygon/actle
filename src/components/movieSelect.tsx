@@ -1,4 +1,4 @@
-import { Accessor, Component, createEffect, createMemo, createSignal, For, JSX, on, onMount, Setter, Show } from 'solid-js';
+import { type Accessor, type Component, createEffect, createMemo, createSignal, For, type JSX, on, onMount, type Setter, Show } from 'solid-js';
 
 import Fuse from 'fuse.js'
 
@@ -45,20 +45,26 @@ const MovieSelect: Component<{
     setText(event.currentTarget.value);
   };
 
+  const sanitizeText = (title:string) => {
+    // remove last 6 characters and trim whitespace
+    return title.slice(0, -6).trim();
+  }
+
   const handleKeydown: JSX.EventHandler<HTMLInputElement, KeyboardEvent> = (event) => {
     if (event.code === 'ArrowUp') {
       setSelected(prev => prev === 0 ? (filteredOptions().length - 1) : prev - 1);
     } else if (event.code === 'ArrowDown') {
       setSelected(prev => prev + 1 === filteredOptions().length ? 0 : prev + 1);
     } else if (event.code === 'Tab') {
-      setText(filteredOptions()[selected()]);
-      // prevent default tab behaviour
-      event.preventDefault();
+      let input = document.getElementById('movieSelectInput') as HTMLInputElement;
+      input.value = sanitizeText(filteredOptions()[selected()]);
+      // setText(sanitizeText(filteredOptions()[selected()]));
+      event.preventDefault(); // prevent default tab behaviour
     } else if (event.code === 'Enter') {
       const input = document.getElementById('movieSelectInput') as HTMLInputElement;
       setText(filteredOptions()[selected()] ? filteredOptions()[selected()] : input.value);
-      props.setGuess(text());
-    } 
+      props.setGuess(sanitizeText(text()));
+    }
     setShow(true);
   }
 
@@ -79,7 +85,7 @@ const MovieSelect: Component<{
       <input
         type="text"
         placeholder="🍿 Guess a movie..."
-        class="w-full p-2 bg-primary-800 text-primary-100 mx-auto block rounded"
+        class="w-full p-2 bg-primary-800 text-primary-100 mx-auto block rounded placeholder:font-emoji"
         value={text()}
         onInput={handleInput}
         onKeyDown={handleKeydown}
@@ -88,15 +94,15 @@ const MovieSelect: Component<{
         id='movieSelectInput'
       />
       <Show when={isVisible()}>
-        <ul class="outline outline-1 outline-accent-300 rounded max-h-48 overflow-y-auto w-full overflow-x-clip">
+        <ul class="outline outline-1 outline-accent-300 rounded max-h-48 overflow-y-auto w-full overflow-x-clip" id='options'>
         <For each={filteredOptions()}>
           {(item, i) => (
             <li 
-              class={ selected() === i() ? 'p-2 bg-primary-700': 'p-2'}
+              class={ selected() === i() ? 'p-2 bg-primary-700 font-sans': 'p-2'}
               onMouseOver={() => setSelected(i)} // set selected item on hover
               onClick={() => { // change 'onclick' to 'onClick'
                 setText(filteredOptions()[i()]);
-                props.setGuess(text());
+                props.setGuess(sanitizeText(text()));
               }}
             >
               {item}

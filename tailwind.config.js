@@ -19,7 +19,7 @@ export default {
       fontFamily: {
         display: ['Rubik Mono One', ...defaultTheme.fontFamily.sans],
         sans: ['Rubik', ...defaultTheme.fontFamily.sans],
-        emoji: ['Noto Color Emoji', ...defaultTheme.fontFamily.sans]
+        emoji: ['Noto Color Emoji', 'Rubik', ...defaultTheme.fontFamily.sans]
       },
       typography: () => ({
         accent: {

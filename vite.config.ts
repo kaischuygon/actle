@@ -3,5 +3,5 @@ import solid from 'vite-plugin-solid'
 import Icons from 'unplugin-icons/vite'
 
 export default defineConfig({
-  plugins: [solid(), Icons({ compiler: 'solid' })],
+  plugins: [solid({ typescript: { onlyRemoveTypeImports: true } }), Icons({ compiler: 'solid' })],
 })

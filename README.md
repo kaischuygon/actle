@@ -10,7 +10,7 @@
 - You have 6 attempts to guess the film.
 
 ### Credits
-- Curated list of movies comes from the letterboxd list [comprehensive framed.wtf film list](https://letterboxd.com/tispe/list/comprehensive-framedwtf-film-list/)
+- List of movies comes from the state of the [TMDb top rated list](https://www.themoviedb.org/movie/top-rated?language=en-US) on 1/16/2024. 
 - Metadata needed for each film scraped using the [TMDb API](https://developer.themoviedb.org/reference/intro/getting-started).
 - Inspired by [Wordle](https://www.nytimes.com/games/wordle/index.html), [Framed](https://framed.wtf) and [all the other spinoffs](https://rwmpelstilzchen.gitlab.io/wordles/).
 
