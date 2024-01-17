@@ -1,5 +1,7 @@
 ## 📼 kino.wtf - A daily game for film buffs. 
 
+![kino.wtf - guess the movie based on the cast](/public/og-image.png)
+
 ### About
 [kino.wtf](https://kino.wtf) is a worlde-like game where you guess the daily movie based on its cast. 
 
