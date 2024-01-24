@@ -14,7 +14,7 @@ const MovieSelect: Component<{
 }> = (props) => {
   const [text, setText] = createSignal('');
   const [show, setShow] = createSignal(false);
-  const [selected, setSelected] = createSignal(0);
+  const [selected, setSelected] = createSignal(-1);
 
   // Clean options array
   props.options = props.options.map(cleanText);
@@ -28,7 +28,7 @@ const MovieSelect: Component<{
   });
 
   createEffect(on(text, () => {
-    setSelected(0);
+    setSelected(-1);
   }));
 
   createEffect(on(props.guess, () => {
@@ -45,28 +45,37 @@ const MovieSelect: Component<{
   };
 
   const sanitizeText = (title:string) => {
-    // remove last 6 characters and trim whitespace
-    return title.slice(0, -6).trim();
+    // remove last 6 characters and trim whitespace if it's a year
+    if (title.slice(-6).match(/\d{4}/)) {
+      return title.slice(0, -6).trim();
+    } else {
+      return title;
+    }
   }
 
   const submit = () => {
-    const input = document.getElementById('movieSelectInput') as HTMLInputElement;
-    setText(filteredOptions()[selected()] ? filteredOptions()[selected()] : input.value);
-    props.setGuess(sanitizeText(text()));
+    if(selected() === -1) {
+      props.setGuess((prev) => ' '.repeat(prev.length + 1))
+      // props.setGuess((prev) => prev.split(' ').slice(0, -1).join(' '));
+    } else {
+      setText(filteredOptions()[selected()]);
+      props.setGuess(sanitizeText(text()));
+    }
   }
 
   const handleKeydown: JSX.EventHandler<HTMLInputElement, KeyboardEvent> = (event) => {
     let input = document.getElementById('movieSelectInput') as HTMLInputElement;
     if (event.code === 'ArrowUp') {
-      setSelected(prev => prev + 1 === filteredOptions().length ? 0 : prev + 1);
+      selected() === -1 ? setSelected(0) : (setSelected(prev => prev + 1 === filteredOptions().length ? 0 : prev + 1));
+      event.preventDefault()
     } else if (event.code === 'ArrowDown') {
-      setSelected(prev => prev === 0 ? (filteredOptions().length - 1) : prev - 1);
+      selected() === -1 ? setSelected(0) : (setSelected(prev => prev + 1 === filteredOptions().length ? 0 : prev - 1));
+      event.preventDefault()
     } else if (event.code === 'Tab') {
-      input.value = sanitizeText(filteredOptions()[selected()]);
-      // setText(sanitizeText(filteredOptions()[selected()]));
+      input.value = filteredOptions()[0] ? filteredOptions()[0] : text();
+      setSelected(filteredOptions()[0] ? 0 : -1);
       event.preventDefault(); // prevent default tab behaviour
     } else if (event.code === 'Enter') {
-      input.value = sanitizeText(filteredOptions()[selected()]);
       submit();
     }
     setShow(true);
@@ -85,37 +94,39 @@ const MovieSelect: Component<{
   };
 
   return (
-    <div class="relative">
-      <Show when={isVisible()}>
-        <ul class="flex flex-col-reverse outline outline-1 outline-accent-300 rounded-t max-h-48 overflow-y-auto w-full overflow-x-clip bg-primary-950 absolute bottom-full" id='options'>
-        <For each={filteredOptions()}>
-          {(item, i) => (
-            <li 
-              class={ selected() === i() ? 'p-2 bg-primary-700 font-sans': 'p-2'}
-              onMouseOver={() => setSelected(i)} // set selected item on hover
-              onClick={() => { // change 'onclick' to 'onClick'
-                setText(filteredOptions()[i()]);
-                props.setGuess(sanitizeText(text()));
-              }}
-            >
-              {item}
-            </li>
-          )}
-        </For>
-        </ul>
-      </Show>
+    <>
       <div class="flex gap-2">
-        <input
-          type="text"
-          placeholder="🍿 Guess a movie..."
-          class="w-full p-2 bg-primary-800 text-primary-100 mx-auto block rounded placeholder:font-emoji"
-          value={text()}
-          onInput={handleInput}
-          onKeyDown={handleKeydown}
-          onBlur={handleBlur} // Use handleBlur instead of inline function
-          onFocus={handleFocus} // Add onFocus event handler
-          id='movieSelectInput'
-        />
+        <div class="relative w-full">
+          <Show when={isVisible()}>
+            <ul class="flex flex-col-reverse outline outline-1 outline-accent-300 rounded-t max-h-48 overflow-y-auto w-full overflow-x-clip bg-primary-950 absolute bottom-full" id='options'>
+            <For each={filteredOptions()}>
+              {(item, i) => (
+                <li 
+                  class={ selected() === i() ? 'p-2 bg-primary-700 font-sans': 'p-2'}
+                  onMouseOver={() => setSelected(i)} // set selected item on hover
+                  onClick={() => { // change 'onclick' to 'onClick'
+                    setText(filteredOptions()[i()]);
+                    props.setGuess(sanitizeText(text()));
+                  }}
+                >
+                  {item}
+                </li>
+              )}
+            </For>
+            </ul>
+          </Show>
+          <input
+            type="text"
+            placeholder="🍿 Guess a movie..."
+            class="w-full p-2 bg-primary-800 text-primary-100 mx-auto block rounded placeholder:font-emoji"
+            value={text()}
+            onInput={handleInput}
+            onKeyDown={handleKeydown}
+            onBlur={handleBlur} // Use handleBlur instead of inline function
+            onFocus={handleFocus} // Add onFocus event handler
+            id='movieSelectInput'
+          />
+        </div>
         <button
           class="bg-accent-400 text-primary-950 hover:brightness-75 p-2 rounded"
           onClick={() => {
@@ -125,7 +136,7 @@ const MovieSelect: Component<{
           Guess
         </button>
       </div>
-    </div>
+    </>
   );
 };
 

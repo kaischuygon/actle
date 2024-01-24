@@ -3,7 +3,28 @@ import defaultTheme from 'tailwindcss/defaultTheme'
 import colors from 'tailwindcss/colors'
 
 const primary = colors.zinc;
-const accent = colors.emerald;
+const colorArray = [
+  colors.amber,
+  colors.blue,
+  colors.cyan,
+  colors.emerald,
+  colors.fuchsia,
+  colors.green,
+  colors.indigo,
+  colors.lime,
+  colors.orange,
+  colors.pink,
+  colors.purple,
+  colors.red,
+  colors.rose,
+  colors.sky,
+  colors.teal,
+  colors.violet,
+  colors.yellow,
+]
+
+// Choose a color from the array based on the current date
+const accentColor = colorArray[new Date().getDate() % colorArray.length];
 
 export default {
   content: [
@@ -14,7 +35,7 @@ export default {
     extend: {
       colors: {
 				primary: primary,
-				accent: accent
+				accent: accentColor,
 			},
       fontFamily: {
         display: ['Rubik Mono One', ...defaultTheme.fontFamily.sans],
@@ -22,23 +43,16 @@ export default {
         emoji: ['Noto Color Emoji', 'Rubik', ...defaultTheme.fontFamily.sans]
       },
       typography: () => ({
-        accent: {
-          css: {
-            '--tw-prose-headings': accent[400],
-            '--tw-prose-links': accent[400],
-            '--tw-prose-bullets': accent[300],
-            '--tw-prose-hr': accent[300],
-            '--tw-prose-quote-borders': accent[300],
-            '--tw-prose-th-borders': accent[300],
-            '--tw-prose-td-borders': accent[200],
-            '--tw-prose-invert-lead': accent[300],
-            '--tw-prose-invert-bullets': accent[600],
-            '--tw-prose-invert-hr': accent[700],
-            '--tw-prose-invert-quote-borders': accent[700],
-            '--tw-prose-invert-th-borders': accent[600],
-            '--tw-prose-invert-td-borders': accent[700],
-          },
-        },
+        DEFAULT: {
+				  css: {
+					a: {
+						color: accentColor,
+						'&:hover': {
+							color: accentColor,
+						},
+					}
+				  },
+				},
       }),
     },
   },

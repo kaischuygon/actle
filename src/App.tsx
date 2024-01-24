@@ -135,7 +135,8 @@ function App() {
     let score = ''
     let button = document.getElementById('shareButton')
     for (let i = 0; i < guesses().length; i++) {
-      score += guesses()[i].toLowerCase() === MOVIE.Name.toLowerCase() ? '🟩' : '🟥'
+      console.log(guesses()[i])
+      score += guesses()[i].toLowerCase() === MOVIE.Name.toLowerCase() ? '🟩' : (guesses()[i].trim() === '' ? '🟨': '🟥')
     }
     for (let i = 0; i < 6 - guesses().length; i++) {
       score += '⬛'
@@ -152,7 +153,7 @@ function App() {
     //     .catch((error) => console.log('Error sharing', error));
     //   return;
     // } else {
-      console.log('Share API not supported')
+      // console.log('Share API not supported')
       // Copy to clipboard
       navigator.clipboard.writeText(result)
         .then(() => {
@@ -187,7 +188,6 @@ function App() {
   // Listen for guesses
   createEffect(on(guess, () => {
     if (guess()) {
-      // remove year from guess
       setGuesses([...guesses(), guess()]);
   
       if (guess().toLowerCase() === MOVIE.Name.toLowerCase()) {
@@ -250,7 +250,7 @@ function App() {
           {(guess) => {
             return (
               <div class="p-2 bg-primary-700 rounded text-center shadow">
-                <p><span class="font-emoji">{guess == MOVIE.Name ? '🟩'  : '🟥'}</span> {guess}</p>
+                <p><span class="font-emoji">{guess == MOVIE.Name ? '🟩'  : (guess.trim() == '' ? '🟨' : '🟥')}</span> {(guess.trim() == '' ? 'Skipped' : guess)}</p>
               </div>
             );
           }}
@@ -299,7 +299,7 @@ function App() {
         <For each={guesses()}>
           {(guess) => {
             return (
-              guess == MOVIE.Name ? '🟩' : '🟥'
+              guess == MOVIE.Name ? '🟩' : (guess.trim() === '' ? '🟨' : '🟥')
             );
           }}
         </For>
@@ -385,14 +385,14 @@ function App() {
     <Show when={!success() && guesses().length < 6}>
       <div class="p-2 font-bold">Hints: {Math.ceil(guesses().length / 2)} / 3</div>
       <div class="flex flex-wrap gap-2 justify-center">
+          <Show when={guesses().length >= 3}>
+            <div class="p-2 bg-primary-700 rounded text-center shadow">
+              <p><strong>Genre{MOVIE.Hints.Genres.split(',').length > 1 ? 's' : ''}</strong>: {MOVIE.Hints.Genres}</p>
+            </div>
+          </Show>
           <Show when={guesses().length >= 1}>
               <div class="p-2 bg-primary-700 rounded text-center shadow">
               <p><strong>Director:</strong> {MOVIE.Hints.Director}</p>
-            </div>
-          </Show>
-          <Show when={guesses().length >= 3}>
-            <div class="p-2 bg-primary-700 rounded text-center shadow">
-              <p><strong>Genre(s)</strong>: {MOVIE.Hints.Genres}</p>
             </div>
           </Show>
           <Show when={guesses().length >= 5}>
@@ -409,36 +409,38 @@ function App() {
   // GameScreen component with title, poster, and stats
   const GameScreen = () => {
     return (
-      <div class="text-center w-full">
-        <p class='my-1 text-3xl font-bold'>
-          <Title />
-        </p>
-        <Hints />
-        <div class="flex flex-col md:flex-row items-center md:aspect-[16/9] my-2 gap-2">
-          <img 
-            src={poster()} alt={guesses().length != 6 ? MOVIE.Actors[guesses().length]['name'] : MOVIE.Name} 
-            class="object-cover rounded mx-auto max-h-[300px] md:max-h-none md:aspect-[2/3] md:h-full" 
-          />
-          <Show when={gameOver() == true} fallback={
-            <InProgress />
-            }>
-              <Endscreen />
-          </Show>
-        </div>
-        <hr class="border-accent-400" />
-        <div class="mt-2" >
-          <Show when={gameOver() == true} fallback={
-            <MovieSelect guess={guess} setGuess={setGuess} options={movieNames} />
-          }>
-            <Stats />
-          </Show>
-        </div>
-        <Show when={guesses().length > 0}>
-          <div class='mt-2'>
-            <Guesses />
+      <>
+        <div class="text-center w-full">
+          <p class='my-1 text-3xl font-bold'>
+            <Title />
+          </p>
+          <Hints />
+          <div class="flex flex-col md:flex-row items-center md:aspect-[16/9] my-2 gap-2">
+            <img 
+              src={poster()} alt={guesses().length != 6 ? MOVIE.Actors[guesses().length]['name'] : MOVIE.Name} 
+              class="object-cover rounded mx-auto max-h-[300px] md:max-h-none md:aspect-[2/3] md:h-full" 
+            />
+            <Show when={gameOver() == true} fallback={
+              <InProgress />
+              }>
+                <Endscreen />
+            </Show>
           </div>
-        </Show>
-      </div>
+          <hr class="border-accent-400" />
+          <div class="mt-2" >
+            <Show when={gameOver() == true} fallback={
+              <MovieSelect guess={guess} setGuess={setGuess} options={movieNames} />
+            }>
+              <Stats />
+            </Show>
+          </div>
+          <Show when={guesses().length > 0}>
+            <div class='mt-2'>
+              <Guesses />
+            </div>
+          </Show>
+        </div>
+      </>
     );
   };
 
@@ -487,12 +489,12 @@ function App() {
     <>
       <div class="w-screen bg-primary-900 text-primary-100">
         <div class="p-2 max-w-screen-sm 2xl:1/3 mx-auto flex flex-col gap-4">
-          <div class="flex items-center gap-2 justify-between">
+          <div class="flex items-center gap-2">
             <div class="font-emoji text-4xl">📼</div>
             <h1 class="text-4xl font-bold text-center text-accent-400 font-display">
             KINO
             </h1>
-            <div class="flex gap-2 justify-center items-center">
+            <div class="flex gap-2 justify-center items-center ml-auto">
               <Modal Icon={AboutIcon} title="About" >
                 <About />
               </Modal>
