@@ -3,7 +3,7 @@ import defaultTheme from 'tailwindcss/defaultTheme'
 import colors from 'tailwindcss/colors'
 
 const primary = colors.zinc;
-const accent = colors.fuchsia;
+const accent = colors.emerald;
 
 export default {
   content: [
