@@ -17,10 +17,10 @@
 
 """
 
+from dotenv import load_dotenv
 import numpy as np
 import requests
 import os
-from dotenv import load_dotenv
 import json
 import logging
 import concurrent.futures
@@ -67,9 +67,6 @@ ch.setFormatter(CustomFormatter())
 
 logger.addHandler(ch)
 
-load_dotenv()
-TMDB_API_KEY = os.getenv("TMDB_API_KEY")
-
 def get_movies_from_page(page:int):
     """
         Gets the movies from a page of the top rated movies from TMDb
@@ -82,39 +79,53 @@ def get_movies_from_page(page:int):
     """
     movies = []
     logger.info(f"Getting page {page}")
-    # TMDb /discover endpoint https://developer.themoviedb.org/reference/discover-movie
     url = f"https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page={page}&region=US&sort_by=vote_count.desc"
 
     headers = {
         "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1MWQ4Yzk5ODg0ZDk4MmZiMDEyNDdjM2ZjYzhlOWM5NiIsInN1YiI6IjYxZmI4NDljNjRkZTM1MDBlMTBhODQwMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.SyIl_ulBWBG8FiApEUfcn5JhoHIk64i6VYWjNgcWQ-M"
+        "Authorization": f"Bearer {TMDB_API_TOKEN}"
     }
 
     response = requests.get(url, headers=headers)
+    if response.status_code != 200:
+        logger.error(f"Error getting page {page} (status code {response.status_code}) header {response.headers}")
     
     data = json.loads(response.text)
     results = data['results']
     for result in results:
-        cast = []
-        casturl = f"https://api.themoviedb.org/3/movie/{result['id']}/credits?language=en-US"
-        response = requests.get(casturl, headers=headers)
-        data = json.loads(response.text)
-        cast = data['cast']
-        cast = [{'name': actor['name'], 'image': f"https://image.tmdb.org/t/p/w500{actor['profile_path']}"} for actor in cast]
+        movie_id = result['id']
+        movie_details = f"https://api.themoviedb.org/3/movie/{movie_id}?append_to_response=credits&language=en-US"
+        response = requests.get(movie_details, headers=headers)
+        details = json.loads(response.text)
+        cast = [{'name': actor['name'], 'image': f"https://image.tmdb.org/t/p/w500{actor['profile_path']}"} for actor in details['credits']['cast']]
+        # Get director
+        for crew in details['credits']['crew']:
+            if crew['job'] == 'Director':
+                director = crew['name']
+                break
+        # Get top 6 actors and reverse the order
+        actors = cast[:6]
+        actors.reverse()
         movie_obj ={
             'Name': result['title'],
             'Year': int(result['release_date'][:4]),
             'URL': f'https://themoviedb.org/movie/{result["id"]}',
             'TMDb ID': result['id'],
-            'Actors': cast[:6], # get max the first 6 actors
-            'Poster': f"https://image.tmdb.org/t/p/w500{result['poster_path']}"
+            'Actors': actors,
+            'Poster': f"https://image.tmdb.org/t/p/w500{result['poster_path']}",
+            # Hints are genre(s), director, release year
+            'Hints' : {
+                'Genres': ", ".join([genre['name'] for genre in details['genres']]),
+                'Director': director if director else "Unknown",
+                'Release Year': int(details['release_date'][:4])
+            }
         }
 
         movies.append(movie_obj)
     
     return movies
 
-def get_top_rated_movies(limit:int = 5):
+def get_top_rated_movies(limit:int = 1):
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         pages = list(range(1, limit + 1))
         results = executor.map(get_movies_from_page, pages)
@@ -125,6 +136,9 @@ def get_top_rated_movies(limit:int = 5):
 
 # main function
 if __name__ == "__main__":
+    load_dotenv()
+    global TMDB_API_TOKEN
+    TMDB_API_TOKEN = os.getenv("TMDB_API_TOKEN")
     logger.info("Starting to scrape pages")
     if args.limit:
         logger.info(f"Limiting to {args.limit} pages")

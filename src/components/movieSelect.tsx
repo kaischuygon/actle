@@ -22,7 +22,6 @@ const MovieSelect: Component<{
   // Super simple fuzzy search using fuse.js
   const fuse = new Fuse(props.options, {threshold: 0.2})
   const filteredOptions = () => fuse.search(text()).map(el => el.item);
-    
 
   const isVisible = createMemo(() => {
     return show() && (filteredOptions().length > 1 || filteredOptions()[0] !== text());
@@ -50,20 +49,25 @@ const MovieSelect: Component<{
     return title.slice(0, -6).trim();
   }
 
+  const submit = () => {
+    const input = document.getElementById('movieSelectInput') as HTMLInputElement;
+    setText(filteredOptions()[selected()] ? filteredOptions()[selected()] : input.value);
+    props.setGuess(sanitizeText(text()));
+  }
+
   const handleKeydown: JSX.EventHandler<HTMLInputElement, KeyboardEvent> = (event) => {
+    let input = document.getElementById('movieSelectInput') as HTMLInputElement;
     if (event.code === 'ArrowUp') {
       setSelected(prev => prev + 1 === filteredOptions().length ? 0 : prev + 1);
     } else if (event.code === 'ArrowDown') {
       setSelected(prev => prev === 0 ? (filteredOptions().length - 1) : prev - 1);
     } else if (event.code === 'Tab') {
-      let input = document.getElementById('movieSelectInput') as HTMLInputElement;
       input.value = sanitizeText(filteredOptions()[selected()]);
       // setText(sanitizeText(filteredOptions()[selected()]));
       event.preventDefault(); // prevent default tab behaviour
     } else if (event.code === 'Enter') {
-      const input = document.getElementById('movieSelectInput') as HTMLInputElement;
-      setText(filteredOptions()[selected()] ? filteredOptions()[selected()] : input.value);
-      props.setGuess(sanitizeText(text()));
+      input.value = sanitizeText(filteredOptions()[selected()]);
+      submit();
     }
     setShow(true);
   }
@@ -100,17 +104,27 @@ const MovieSelect: Component<{
         </For>
         </ul>
       </Show>
-      <input
-        type="text"
-        placeholder="🍿 Guess a movie..."
-        class="w-full p-2 bg-primary-800 text-primary-100 mx-auto block rounded placeholder:font-emoji"
-        value={text()}
-        onInput={handleInput}
-        onKeyDown={handleKeydown}
-        onBlur={handleBlur} // Use handleBlur instead of inline function
-        onFocus={handleFocus} // Add onFocus event handler
-        id='movieSelectInput'
-      />
+      <div class="flex gap-2">
+        <input
+          type="text"
+          placeholder="🍿 Guess a movie..."
+          class="w-full p-2 bg-primary-800 text-primary-100 mx-auto block rounded placeholder:font-emoji"
+          value={text()}
+          onInput={handleInput}
+          onKeyDown={handleKeydown}
+          onBlur={handleBlur} // Use handleBlur instead of inline function
+          onFocus={handleFocus} // Add onFocus event handler
+          id='movieSelectInput'
+        />
+        <button
+          class="bg-accent-400 text-primary-950 hover:brightness-75 p-2 rounded"
+          onClick={() => {
+            submit();
+          }}
+        >
+          Guess
+        </button>
+      </div>
     </div>
   );
 };

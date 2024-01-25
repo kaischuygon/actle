@@ -92,7 +92,7 @@ function App() {
     const state = {
       guesses: guesses(),
       success: success(),
-      poster: gameOver() ? MOVIE.Poster : MOVIE.Actors[guesses().length]['image'], // keep poster in sync with hints
+      poster: gameOver() ? MOVIE.Poster : MOVIE.Actors[guesses().length]['image'], // keep poster in sync with guesses
       lastUpdated: new Date().getDate(),
       gameOver: gameOver()
     };
@@ -130,40 +130,42 @@ function App() {
     saveState();
   });
 
-  // Share result to social media or copy to clipboard
+  // Copy result to clipboard
   function shareResult() {
-    let result = ''
+    let score = ''
     let button = document.getElementById('shareButton')
     for (let i = 0; i < guesses().length; i++) {
-      result += guesses()[i].toLowerCase() === MOVIE.Name.toLowerCase() ? '🟩' : '🟥'
+      score += guesses()[i].toLowerCase() === MOVIE.Name.toLowerCase() ? '🟩' : '🟥'
     }
     for (let i = 0; i < 6 - guesses().length; i++) {
-      result += '⬛'
+      score += '⬛'
     }
 
-    result = `📼 Kino ﹟ ${day % movies.length + 1}\n ${result}`
+    let result = `📼 Kino ﹟${day % movies.length + 1}\n${score}\nhttps://www.kino.wtf`
 
-    const shareData = {
-      title: '📼 Kino ﹟' + (day % movies.length + 1),
-      text: result,
-      url: 'https://www.kino.wtf',
-    }
-
-    if (navigator.share) {
-      navigator.share(shareData)
-        .then(() => console.log('Shared successfully'))
-        .catch((error) => console.log('Error sharing', error));
-    } else {
-      console.log('Web Share API not supported in your browser')
-      // Fallback to copy to clipboard
-      navigator.clipboard.writeText(result + '\n https://www.kino.wtf')
+    // Check if the Share API is supported
+    // if (navigator.share) {
+    //   navigator.share({
+    //     text: result,
+    //   })
+    //     .then(() => console.log('Successful share'))
+    //     .catch((error) => console.log('Error sharing', error));
+    //   return;
+    // } else {
+      console.log('Share API not supported')
+      // Copy to clipboard
+      navigator.clipboard.writeText(result)
         .then(() => {
           console.log('Copied to clipboard')
           button!.innerHTML = 'Copied!'
+          // Reset button text after 2 seconds
+          setTimeout(() => {
+            button!.innerHTML = 'Share'
+          }, 2000)
         })
         .catch((error) => console.log('Error copying to clipboard', error));
-    }
-  };
+    // };
+  }
 
   // Update stats when the game ends
   function updateStats() {
@@ -181,7 +183,6 @@ function App() {
       maxStreak: newMaxStreak
     });
   }
-
 
   // Listen for guesses
   createEffect(on(guess, () => {
@@ -205,17 +206,14 @@ function App() {
     }
   }));
 
-  /**
-   * 
-   * @returns About content for modal
-   */
+  // About modal content
   const About = () => {
     return <>
       <p>
-        A game for film buffs and casual moviegoers alike. Inspired by wordle, but for movies.
+        A game for film buffs and casual moviegoers alike. Inspired by <a href="https://www.nytimes.com/games/wordle/index.html" target="_blank">wordle</a>, but for movies.
       </p>
       <p>
-        Each day a new movie is chosen from a curated list, and the hints are based on the top 6 actors provided by the <a target="_blank" href="https://developer.themoviedb.org/reference/intro/getting-started">TMDB API</a>.
+        Each day a new movie is chosen from a curated list, and the hints are based on the top 6 actors (in reverse order), as well as other trivia provided by the <a target="_blank" href="https://developer.themoviedb.org/reference/intro/getting-started">TMDB API</a>.
       </p>
       <p>
         Built with <a target="_blank" href="https://solidjs.com/">SolidJS</a> and <a target="_blank" href="https://tailwindcss.com/">Tailwind CSS</a>.
@@ -223,10 +221,7 @@ function App() {
     </>
   }
 
-  /**
-   * 
-   * @returns Instuction content for modal
-   */
+  // Instructions modal content
   const Instructions = () => {
     return <>
       <ul>
@@ -234,21 +229,19 @@ function App() {
           Use the hints provided to guess a film.
         </li>
         <li>
-          If you guess incorrectly, another actor from the film will be revealed.
+          If you guess incorrectly, another actor and/or another hint from the film will be revealed.
         </li>
         <li>
           Leave the input blank to skip a guess and get the next hint.
         </li>
         <li>
-          You have 6 attempts to guess the film.
+          You have 6 guesses to guess the film.
         </li>
       </ul>
     </>
   }
 
-  /**
-   * @returns Bottom page guesses component with red or green emoji
-   */
+  // Guesses component with emojis
   const Guesses = () => {
     return <>
       <div class="p-2 font-bold">Guesses: {guesses().length} / 6</div>
@@ -266,23 +259,20 @@ function App() {
     </>
   }
 
-  /**
-   * 
-   * @returns Title component with emoji
-   */
+  // Title component with emojis
   const Title = () => {
     return (
       <Show when={gameOver() == true} fallback={
         <div>
           <span class="font-emoji">🎞️ </span>
-          Make a guess
+          Make a guess!
           <span class="font-emoji"> 🎞️</span>
         </div>
       }>
         <Show when={success() == true} fallback={
           <div>
             <span class="font-emoji">🎬 </span>
-            Better luck next time
+            You lost
             <span class="font-emoji"> 🎬</span>
           </div>
         }>
@@ -296,10 +286,7 @@ function App() {
     )
   }
 
-  /**
-   * 
-   * @returns Endscreen summary with title, share button and emojis
-   */
+  // Endscreen component with answer and share button
   const Endscreen = () => {
     return (<div class="flex flex-col gap-2 text-center w-full">
       <div>The answer was:</div>
@@ -335,26 +322,19 @@ function App() {
     </div>)
   }
 
-  /**
-   * 
-   * @param i index of hint
-   * @returns function to change poster to hint
-   */
+  // Change poster when hint is clicked
   const changePoster = (i: number) => {
     return () => {
       setPoster(MOVIE.Actors[i]['image'])
     }
   }
 
-  /**
-   * 
-   * @returns In progress component with hints
-   */
+  // InProgress component with clickable actors
   const InProgress = () => {
     return (
       <div class="flex flex-col w-full h-full gap-2">
         <For each={MOVIE.Actors}>
-          {(hint, i) => {
+          {(actor, i) => {
             return (
               <Show
                 when={i() <= guesses().length}
@@ -364,13 +344,13 @@ function App() {
                   </button>
                 }
               >
-                <Show when={hint['image'] == poster()} fallback={
+                <Show when={actor['image'] == poster()} fallback={
                     <button class="p-2 bg-primary-700 rounded text-center w-full shadow hover:brightness-75 md:h-full" onclick={changePoster(i())}>
-                      {hint['name']}
+                      {actor['name']}
                     </button>
                 }>
                   <button class="p-2 bg-accent-400 text-primary-900 rounded text-center w-full shadow hover:brightness-75 md:h-full" onclick={changePoster(i())}>
-                    {hint['name']}
+                    {actor['name']}
                   </button>
                 </Show>
               </Show>
@@ -380,10 +360,7 @@ function App() {
       </div>)
   }
 
-  /**
-   * 
-   * @returns Stats component with game stats, displayed in modal and gameScreen
-   */
+  // Stats component with game stats
   const Stats = () => {
     return <>
       <div class="flex gap-2 justify-center flex-wrap" >
@@ -401,18 +378,47 @@ function App() {
     </>
   }
 
-  /**
-   * 
-   * @returns Game screen component with Title, poster, hints/endscreen and stats
-   */
+  // Hints component with hints revealed every 2 guesses
+  const Hints = () => {
+    return (
+    <>
+    <Show when={!success() && guesses().length < 6}>
+      <div class="p-2 font-bold">Hints: {Math.ceil(guesses().length / 2)} / 3</div>
+      <div class="flex flex-wrap gap-2 justify-center">
+          <Show when={guesses().length >= 1}>
+              <div class="p-2 bg-primary-700 rounded text-center shadow">
+              <p><strong>Director:</strong> {MOVIE.Hints.Director}</p>
+            </div>
+          </Show>
+          <Show when={guesses().length >= 3}>
+            <div class="p-2 bg-primary-700 rounded text-center shadow">
+              <p><strong>Genre(s)</strong>: {MOVIE.Hints.Genres}</p>
+            </div>
+          </Show>
+          <Show when={guesses().length >= 5}>
+            <div class="p-2 bg-primary-700 rounded text-center shadow">
+              <p><strong>Release year:</strong> {MOVIE.Hints["Release Year"]}</p>
+            </div>
+          </Show>
+      </div>
+    </Show>
+    </>
+    )
+  }
+
+  // GameScreen component with title, poster, and stats
   const GameScreen = () => {
     return (
       <div class="text-center w-full">
         <p class='my-1 text-3xl font-bold'>
           <Title />
         </p>
+        <Hints />
         <div class="flex flex-col md:flex-row items-center md:aspect-[16/9] my-2 gap-2">
-          <img src={poster()} alt={guesses().length != 6 ? MOVIE.Actors[guesses().length]['name'] : MOVIE.Name} class="object-cover rounded mx-auto max-h-[300px] md:max-h-none md:aspect-[2/3] md:h-full" />
+          <img 
+            src={poster()} alt={guesses().length != 6 ? MOVIE.Actors[guesses().length]['name'] : MOVIE.Name} 
+            class="object-cover rounded mx-auto max-h-[300px] md:max-h-none md:aspect-[2/3] md:h-full" 
+          />
           <Show when={gameOver() == true} fallback={
             <InProgress />
             }>
@@ -436,10 +442,7 @@ function App() {
     );
   };
 
-  /**
-   * 
-   * @returns Footer component with links
-   */
+  // Footer component with links
   const Footer = () => {
     return (
       <div class="flex flex-wrap text-xs text-primary-300 m-2 gap-2 justify-center">
@@ -468,10 +471,7 @@ function App() {
     )
   }
 
-  /**
-   * 
-   * @returns Give up button
-   */
+  // GiveUp button
   const GiveUp = () => {
     return (
       <button class="mx-auto p-2 bg-accent-400 rounded text-center shadow text-primary-950 hover:brightness-75 transition" onclick={() => {
@@ -487,11 +487,12 @@ function App() {
     <>
       <div class="w-screen bg-primary-900 text-primary-100">
         <div class="p-2 max-w-screen-sm 2xl:1/3 mx-auto flex flex-col gap-4">
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 justify-between">
+            <div class="font-emoji text-4xl">📼</div>
             <h1 class="text-4xl font-bold text-center text-accent-400 font-display">
-              <span class="font-emoji">📼</span> KINO
+            KINO
             </h1>
-            <div class="flex gap-2 justify-center items-center ml-auto">
+            <div class="flex gap-2 justify-center items-center">
               <Modal Icon={AboutIcon} title="About" >
                 <About />
               </Modal>

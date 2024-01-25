@@ -1,10 +1,29 @@
-import { createSignal } from "solid-js";
+import { createSignal, onCleanup } from "solid-js";
 import CloseIcon from "~icons/bx/bx-x";
 // @ts-ignore
 import clickOutside from "./click-outside";
 
 function Modal({ children, Icon, title }: { children:any , Icon?:any, title:string }) {
   const [show, setShow] = createSignal(false);
+  
+  // Add event listener for escape key
+  const handleEscape = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setShow(false);
+    }
+  };
+
+  // Add event listener when component mounts
+  if (typeof window !== 'undefined') {
+    window.addEventListener('keydown', handleEscape);
+  }
+
+  // Remove event listener when component unmounts
+  onCleanup(() => {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('keydown', handleEscape);
+    }
+  });
   
   return (
       <>
