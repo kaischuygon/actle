@@ -79,7 +79,7 @@ def get_movies_from_page(page:int):
     """
     movies = []
     logger.info(f"Getting page {page}")
-    url = f"https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page={page}&region=US&sort_by=vote_count.desc"
+    url = f"https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page={page}&sort_by=vote_count.desc&without_genres=16"
 
     headers = {
         "accept": "application/json",
