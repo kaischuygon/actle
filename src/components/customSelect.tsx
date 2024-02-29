@@ -75,7 +75,7 @@ const MovieSelect: Component<{
     } else if (event.code === 'Tab') {
       event.preventDefault(); // prevent default tab behaviour
       input.value = filteredOptions()[0] ? filteredOptions()[selected()] : text();
-      setSelected(filteredOptions()[0] ? 0 : -1);
+      // setSelected(filteredOptions()[0] ? 0 : -1);
     } else if (event.code === 'Enter') {
       submit();
     }

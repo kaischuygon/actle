@@ -25,6 +25,17 @@ import json
 import logging
 import concurrent.futures
 import argparse
+import html
+
+def escape_html(json_data):
+    if isinstance(json_data, dict):
+        return {k: escape_html(v) for k, v in json_data.items()}
+    elif isinstance(json_data, list):
+        return [escape_html(element) for element in json_data]
+    elif isinstance(json_data, str):
+        return html.escape(json_data)
+    else:
+        return json_data
 
 # Create a parser
 parser = argparse.ArgumentParser(description='Process some integers.')
@@ -107,17 +118,17 @@ def get_movies_from_page(page:int):
         actors = cast[:6]
         actors.reverse()
         movie_obj ={
-            'Name': result['title'],
-            'Year': int(result['release_date'][:4]),
-            'URL': f'https://themoviedb.org/movie/{result["id"]}',
-            'TMDb ID': result['id'],
-            'Actors': actors,
-            'Poster': f"https://image.tmdb.org/t/p/w500{result['poster_path']}",
+            'Name': escape_html(result['title']),
+            'Year': escape_html(int(result['release_date'][:4])),
+            'URL': escape_html(f'https://themoviedb.org/movie/{result["id"]}'),
+            'TMDb ID': escape_html(result['id']),
+            'Actors': escape_html(actors),
+            'Poster': escape_html(f"https://image.tmdb.org/t/p/w500{result['poster_path']}"),
             # Hints are genre(s), director, release year
             'Hints' : {
-                'Genres': ", ".join([genre['name'] for genre in details['genres']]),
-                'Director': director if director else "Unknown",
-                'Release Year': int(details['release_date'][:4])
+                'Genres': escape_html(", ".join([genre['name'] for genre in details['genres']])),
+                'Director': escape_html(director if director else "Unknown"),
+                'Release Year': escape_html(int(details['release_date'][:4]))
             }
         }
 
@@ -153,7 +164,7 @@ if __name__ == "__main__":
 
     logger.info("Exporting movies.json")
     # export the json object to a file
-    with open('movies.json', 'w') as outfile:
+    with open('movies.json', 'w', encoding='utf-8') as outfile:
         outfile.write(movies_json)
 
     logger.info("Sucessfully scraped {} movies".format(len(movies)))

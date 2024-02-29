@@ -28,6 +28,17 @@ import logging
 import concurrent.futures
 import argparse
 import pandas as pd
+import html
+
+def escape_html(json_data):
+    if isinstance(json_data, dict):
+        return {k: escape_html(v) for k, v in json_data.items()}
+    elif isinstance(json_data, list):
+        return [escape_html(element) for element in json_data]
+    elif isinstance(json_data, str):
+        return html.escape(json_data)
+    else:
+        return json_data
 
 # Create a parser
 parser = argparse.ArgumentParser(description='Process some integers.')
@@ -114,22 +125,22 @@ def get_actor_info(actor_id:str):
             {
                 'title': credit['title'],
                 'year': int(credit['release_date'][:4]) if credit.get('release_date') else None,
-                'image': f"https://image.tmdb.org/t/p/w500{credit['poster_path']}"
+                'image': f"https://image.tmdb.org/t/p/w500{credit['poster_path']}" if credit.get('poster_path') else None,
             } for credit in details['movie_credits']['cast']
         ]
         known_for = known_for[:6]
         known_for.reverse()
         actor_obj ={
-            'Name': details['name'],
-            'URL': f'https://themoviedb.org/person/{details["id"]}',
-            'TMDb ID': details['id'],
-            'Headshot': f"https://image.tmdb.org/t/p/w500{details['profile_path']}" if details['profile_path'] else None,
-            'Credits': known_for,
+            'Name': escape_html(details['name']),
+            'URL': escape_html(f'https://themoviedb.org/person/{details["id"]}'),
+            'TMDb ID': escape_html(details['id']),
+            'Headshot': escape_html(f"https://image.tmdb.org/t/p/w500{details['profile_path']}" if details['profile_path'] else None),
+            'Credits': escape_html(known_for),
             # Hints are genre(s), director, release year
             'Hints' : {
-                'Place of Birth': details['place_of_birth'],
-                'Birthdate': details['birthday'],
-                'Gender': gender,
+                'Place of Birth': escape_html(details['place_of_birth']),
+                'Birthdate': escape_html(details['birthday']),
+                'Gender': escape_html(gender),
             }
         }
 
@@ -175,11 +186,12 @@ if __name__ == "__main__":
     # randomize the order of the actors
     logger.info("Randomizing the order of the actors")
     np.random.shuffle(actors)
+    actors = escape_html(actors)
     actors_json = json.dumps(actors, indent=4, sort_keys=True)
 
-    logger.info("Exporting actors.json")
+    logger.info("Exporting actors.json and escaping html characters in the json object")
     # export the json object to a file
-    with open('actors.json', 'w') as outfile:
+    with open('actors.json', 'w', encoding='utf-8') as outfile:
         outfile.write(actors_json)
 
     logger.info("Sucessfully scraped {} actors".format(len(actors)))
