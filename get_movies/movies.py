@@ -108,7 +108,7 @@ def get_movies_from_page(page:int):
         movie_details = f"https://api.themoviedb.org/3/movie/{movie_id}?append_to_response=credits&language=en-US"
         response = requests.get(movie_details, headers=headers)
         details = json.loads(response.text)
-        cast = [{'name': actor['name'], 'image': f"https://image.tmdb.org/t/p/w500{actor['profile_path']}"} for actor in details['credits']['cast']]
+        cast = [{'name': actor['name'], 'image': f"https://image.tmdb.org/t/p/w500{actor['profile_path']}"} if actor.get('profile_path') else None for actor in details['credits']['cast'] ]
         # Get director
         for crew in details['credits']['crew']:
             if crew['job'] == 'Director':
@@ -127,10 +127,23 @@ def get_movies_from_page(page:int):
             # Hints are genre(s), director, release year
             'Hints' : {
                 'Genres': escape_html(", ".join([genre['name'] for genre in details['genres']])),
-                'Director': escape_html(director if director else "Unknown"),
+                'Director': escape_html(director if director else None),
                 'Release Year': escape_html(int(details['release_date'][:4]))
             }
         }
+
+        # If any of the keys are missing, dont add the actor
+        if not all(movie_obj.values()) or not all(movie_obj['Hints'].values()):
+            logger.info(f"Missing values for movie {movie_obj['Name']}, skipping")
+            continue
+        # If actors list is not 6 long, dont add the actor
+        if len(movie_obj['Actors']) != 6:
+            logger.info(f"Movie {movie_obj['Name']} does not have 6 actors, skipping")
+            continue
+        # If None in actors list, skip
+        if None in movie_obj['Actors']:
+            logger.info(f"Movie {movie_obj['Name']} credits does not have images, skipping")
+            continue
 
         movies.append(movie_obj)
     
