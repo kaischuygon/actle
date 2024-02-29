@@ -460,12 +460,11 @@ export default () => {
         <div class="p-2 max-w-screen-sm 2xl:1/3 mx-auto flex flex-col gap-4">
           <div class="flex items-center gap-2">
             <div class="font-emoji text-4xl">📼</div>
-            <h1 class="text-4xl font-bold text-center text-accent font-display">
+            <h1 class="text-4xl font-bold text-accent font-display">
             <a href="/" class="no-underline">KINO</a>
             </h1>
-            <h2 class="text-xl font-bold text-center font-display">
-              actors
-            </h2>
+            <a title="play KINO movies" href="/movies" class="font-emoji text-3xl no-underline grayscale brightness-75">🎞️</a>
+            <div title="play KINO actors" class="font-emoji text-3xl no-underline">🎭</div>
             <div class="flex gap-2 ml-auto">
               <Modal Icon={AboutIcon} title="About" >
               <p>

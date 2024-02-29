@@ -463,9 +463,8 @@ export default () => {
             <h1 class="text-4xl font-bold text-center text-accent font-display">
             <a href="/" class="no-underline">KINO</a>
             </h1>
-            <h2 class="text-xl font-bold text-center font-display">
-              movies
-            </h2>
+            <div title="play KINO movies" class="font-emoji text-3xl no-underline">🎞️</div>
+            <a title="play KINO actors" href="/actors" class="font-emoji text-3xl no-underline  grayscale brightness-75">🎭</a>
             <div class="flex gap-2 ml-auto">
               <Modal Icon={AboutIcon} title="About" >
               <p>
