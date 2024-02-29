@@ -44,7 +44,7 @@ export default () => {
 
   // Choose actor based on days since 2/28/2024
   const date = new Date()
-  const start = new Date(2024, 1, 28)
+  const start = new Date(2024, 1, 29)
   const day = Math.floor((date.getTime() - start.getTime()) / (1000 * 3600 * 24))
   const ACTOR = actors[day % actors.length]
 

@@ -111,8 +111,6 @@ def get_actor_info(actor_id:str):
         details_url = f"https://api.themoviedb.org/3/person/{actor_id}?append_to_response=movie_credits&language=en-US"
         response = requests.get(details_url, headers=headers)
         details = json.loads(response.text)
-        known_for = details['movie_credits']['cast'][:6]
-        known_for.reverse()
         if details['gender'] == 1:
             gender = 'Female'
         elif details['gender'] == 2:
@@ -121,14 +119,14 @@ def get_actor_info(actor_id:str):
             gender = 'Non-binary'
         else:
             gender = None
-        known_for = [
-            {
-                'title': credit['title'],
-                'year': int(credit['release_date'][:4]) if credit.get('release_date') else None,
-                'image': f"https://image.tmdb.org/t/p/w500{credit['poster_path']}" if credit.get('poster_path') else None,
-            } for credit in details['movie_credits']['cast']
-        ]
-        known_for = known_for[:6]
+        known_for = []
+        for credit in details['movie_credits']['cast'][:6]:
+            if credit.get('poster_path') and credit.get('release_date'):
+                known_for.append({
+                    'title': credit['title'],
+                    'year': int(credit['release_date'][:4]),
+                    'image': f"https://image.tmdb.org/t/p/w500{credit['poster_path']}"
+                })
         known_for.reverse()
         actor_obj ={
             'Name': details['name'],
@@ -157,7 +155,7 @@ def get_actor_info(actor_id:str):
     return actors
 
 def get_top_rated_actors(limit:int = 20):
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         # Load the top 1000 actors from the file top1000actors.csv
         actor_ids = []
         df = pd.read_csv('top1000actors.csv')
@@ -186,7 +184,6 @@ if __name__ == "__main__":
     # randomize the order of the actors
     logger.info("Randomizing the order of the actors")
     np.random.shuffle(actors)
-    # actors = actors)
     actors_json = json.dumps(actors, indent=4, sort_keys=True)
 
     logger.info("Exporting actors.json and escaping html characters in the json object")

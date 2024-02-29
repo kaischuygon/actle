@@ -75,7 +75,7 @@ export default () => {
 
   // Load stats from localStorage when the component mounts
   createEffect(() => {
-    const savedStats = localStorage.getItem('movieStats');
+    const savedStats = localStorage.getItem('gameStats'); // XXX gameStats still
     if (savedStats) {
       setMovieStats(JSON.parse(savedStats));
     }
@@ -84,7 +84,7 @@ export default () => {
   // Save stats to localStorage whenever they change
   createEffect(() => {
     const stats = movieStats();
-    localStorage.setItem('movieStats', JSON.stringify(stats));
+    localStorage.setItem('gameStats', JSON.stringify(stats));
   });
 
   // Save state to localStorage
