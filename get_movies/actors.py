@@ -131,16 +131,16 @@ def get_actor_info(actor_id:str):
         known_for = known_for[:6]
         known_for.reverse()
         actor_obj ={
-            'Name': escape_html(details['name']),
-            'URL': escape_html(f'https://themoviedb.org/person/{details["id"]}'),
-            'TMDb ID': escape_html(details['id']),
-            'Headshot': escape_html(f"https://image.tmdb.org/t/p/w500{details['profile_path']}" if details['profile_path'] else None),
-            'Credits': escape_html(known_for),
+            'Name': details['name'],
+            'URL': f'https://themoviedb.org/person/{details["id"]}',
+            'TMDb ID': details['id'],
+            'Headshot': f"https://image.tmdb.org/t/p/w500{details['profile_path']}" if details['profile_path'] else None,
+            'Credits': known_for,
             # Hints are genre(s), director, release year
             'Hints' : {
-                'Place of Birth': escape_html(details['place_of_birth']),
-                'Birthdate': escape_html(details['birthday']),
-                'Gender': escape_html(gender),
+                'Place of Birth': details['place_of_birth'],
+                'Birthdate': details['birthday'],
+                'Gender': gender,
             }
         }
 
@@ -186,7 +186,7 @@ if __name__ == "__main__":
     # randomize the order of the actors
     logger.info("Randomizing the order of the actors")
     np.random.shuffle(actors)
-    actors = escape_html(actors)
+    # actors = actors)
     actors_json = json.dumps(actors, indent=4, sort_keys=True)
 
     logger.info("Exporting actors.json and escaping html characters in the json object")

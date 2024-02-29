@@ -118,17 +118,17 @@ def get_movies_from_page(page:int):
         actors = cast[:6]
         actors.reverse()
         movie_obj ={
-            'Name': escape_html(result['title']),
-            'Year': escape_html(int(result['release_date'][:4])),
-            'URL': escape_html(f'https://themoviedb.org/movie/{result["id"]}'),
-            'TMDb ID': escape_html(result['id']),
-            'Actors': escape_html(actors),
-            'Poster': escape_html(f"https://image.tmdb.org/t/p/w500{result['poster_path']}"),
+            'Name': result['title'],
+            'Year': int(result['release_date'][:4]),
+            'URL': f'https://themoviedb.org/movie/{result["id"]}',
+            'TMDb ID': result['id'],
+            'Actors': actors,
+            'Poster': f"https://image.tmdb.org/t/p/w500{result['poster_path']}",
             # Hints are genre(s), director, release year
             'Hints' : {
-                'Genres': escape_html(", ".join([genre['name'] for genre in details['genres']])),
-                'Director': escape_html(director if director else None),
-                'Release Year': escape_html(int(details['release_date'][:4]))
+                'Genres': ", ".join([genre['name'] for genre in details['genres']]),
+                'Director': director if director else None,
+                'Release Year': int(details['release_date'][:4])
             }
         }
 
