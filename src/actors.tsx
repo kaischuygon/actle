@@ -390,7 +390,7 @@ export default () => {
           </div>
           <Show when={!actorGameOver()} fallback={
             <a href='/movies' class="inline-block mx-auto m-2 p-2 bg-accent rounded text-center shadow text-primary-950 hover:brightness-75 no-underline">
-              <span class="font-emoji">🎭</span> Play <span class="font-display">KINO</span> movies
+              <span class="font-emoji">🎞️</span> Play <span class="font-display">KINO</span> movies
             </a>
           }>
             <Hints />
