@@ -9,11 +9,11 @@
 }
 
 a {
-  @apply text-accent-400 underline;
+  @apply text-accent underline;
 }
 
 *:focus {
-  @apply outline outline-accent-300 outline-1;
+  @apply outline outline-accent outline-1;
 }
 
 .movieSelect .solid-select-container {
@@ -21,7 +21,7 @@ a {
 }
 
 .solid-select-list {
-  @apply outline outline-1 outline-accent-300 rounded h-48 overflow-y-auto w-full overflow-x-clip;
+  @apply outline outline-1 outline-accent rounded h-48 overflow-y-auto w-full overflow-x-clip;
 }
 
 .movieSelect .solid-select-option {

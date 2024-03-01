@@ -41,7 +41,7 @@ function Modal({ children, Icon, title }: { children:any , Icon?:any, title:stri
             <div class="flex items-center justify-center min-h-screen">
               <div class="inline-block bg-primary-800 rounded shadow-xl w-full md:w-1/3">
                 <div class="flex justify-between items-center m-4">
-                  <h3 class="text-lg font-semibold text-accent-400" id="info-modal">
+                  <h3 class="text-lg font-semibold text-accent" id="info-modal">
                     <Icon class="inline"/> {title}
                   </h3>
                   <button onClick={() => setShow(false)} type="button" class="block">
