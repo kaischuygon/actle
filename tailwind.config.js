@@ -2,30 +2,6 @@
 import defaultTheme from 'tailwindcss/defaultTheme'
 import colors from 'tailwindcss/colors'
 
-const primary = colors.zinc;
-const colorArray = [
-  colors.amber,
-  colors.blue,
-  colors.cyan,
-  colors.emerald,
-  colors.fuchsia,
-  colors.green,
-  colors.indigo,
-  colors.lime,
-  colors.orange,
-  colors.pink,
-  colors.purple,
-  colors.red,
-  colors.rose,
-  colors.sky,
-  colors.teal,
-  colors.violet,
-  colors.yellow,
-]
-
-// Choose a color from the array based on the current date
-const accentColor = colorArray[new Date().getDate() % colorArray.length];
-
 export default {
   content: [
     "./index.html",
@@ -34,8 +10,8 @@ export default {
   theme: {
     extend: {
       colors: {
-				primary: primary,
-				accent: accentColor,
+				primary: colors.zinc,
+				accent: 'var(--ACCENT)',
 			},
       fontFamily: {
         display: ['Rubik Mono One', ...defaultTheme.fontFamily.sans],
@@ -46,9 +22,9 @@ export default {
         DEFAULT: {
 				  css: {
 					a: {
-						color: accentColor,
+						color: 'var(--ACCENT)',
 						'&:hover': {
-							color: accentColor,
+							color: 'var(--ACCENT)',
 						},
 					}
 				  },

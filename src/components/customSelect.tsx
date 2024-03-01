@@ -21,7 +21,7 @@ const MovieSelect: Component<{
 
   // Super simple fuzzy search using fuse.js
   const fuse = new Fuse(props.options, {threshold: 0.2})
-  const filteredOptions = () => fuse.search(text()).map(el => el.item);
+  const filteredOptions = () => fuse.search(text()).map(el => el.item).slice(0, 5);
 
   const isVisible = createMemo(() => {
     return show() && (filteredOptions().length > 1 || filteredOptions()[0] !== text());
@@ -37,11 +37,12 @@ const MovieSelect: Component<{
   }));
 
   onMount(() => {
-    document.getElementById('movieSelectInput')?.focus()
+    document.getElementById('customSelectInput')?.focus()
   });
 
   const handleInput: JSX.EventHandlerUnion<HTMLInputElement, InputEvent> = (event) => {
     setText(event.currentTarget.value);
+    setSelected(0);
   };
 
   const sanitizeText = (title:string) => {
@@ -64,17 +65,17 @@ const MovieSelect: Component<{
   }
 
   const handleKeydown: JSX.EventHandler<HTMLInputElement, KeyboardEvent> = (event) => {
-    let input = document.getElementById('movieSelectInput') as HTMLInputElement;
+    let input = document.getElementById('customSelectInput') as HTMLInputElement;
     if (event.code === 'ArrowUp') {
+      event.preventDefault()
       selected() === -1 ? setSelected(0) : (setSelected(prev => prev + 1 === filteredOptions().length ? 0 : prev + 1));
-      event.preventDefault()
     } else if (event.code === 'ArrowDown') {
-      selected() === -1 ? setSelected(0) : (setSelected(prev => prev + 1 === filteredOptions().length ? 0 : prev - 1));
       event.preventDefault()
+      selected() === -1 ? setSelected(0) : (setSelected(prev => prev + 1 === filteredOptions().length ? 0 : Math.max(prev - 1, 0)));
     } else if (event.code === 'Tab') {
-      input.value = filteredOptions()[0] ? filteredOptions()[0] : text();
-      setSelected(filteredOptions()[0] ? 0 : -1);
       event.preventDefault(); // prevent default tab behaviour
+      input.value = filteredOptions()[0] ? filteredOptions()[selected()] : text();
+      setSelected(filteredOptions()[0] ? 0 : -1);
     } else if (event.code === 'Enter') {
       submit();
     }
@@ -98,7 +99,7 @@ const MovieSelect: Component<{
       <div class="flex gap-2">
         <div class="relative w-full">
           <Show when={isVisible()}>
-            <ul class="flex flex-col-reverse outline outline-1 outline-accent-300 rounded-t max-h-48 overflow-y-auto w-full overflow-x-clip bg-primary-950 absolute bottom-full" id='options'>
+            <ul class="flex flex-col-reverse outline outline-1 outline-accent rounded-t max-h-48 overflow-y-auto w-full overflow-x-clip bg-primary-950 absolute bottom-full" id='options'>
             <For each={filteredOptions()}>
               {(item, i) => (
                 <li 
@@ -117,18 +118,18 @@ const MovieSelect: Component<{
           </Show>
           <input
             type="text"
-            placeholder="🍿 Guess a movie..."
+            placeholder="🍿 Enter a guess..."
             class="w-full p-2 bg-primary-800 text-primary-100 mx-auto block rounded placeholder:font-emoji"
             value={text()}
             onInput={handleInput}
             onKeyDown={handleKeydown}
             onBlur={handleBlur} // Use handleBlur instead of inline function
             onFocus={handleFocus} // Add onFocus event handler
-            id='movieSelectInput'
+            id='customSelectInput'
           />
         </div>
         <button
-          class="bg-accent-400 text-primary-950 hover:brightness-75 p-2 rounded"
+          class="bg-accent text-primary-950 hover:brightness-75 p-2 rounded"
           onClick={() => {
             submit();
           }}
