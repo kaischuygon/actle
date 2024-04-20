@@ -21,7 +21,7 @@ const MovieSelect: Component<{
 
   // Super simple fuzzy search using fuse.js
   const fuse = new Fuse(props.options, {threshold: 0.2})
-  const filteredOptions = () => fuse.search(text()).map(el => el.item).slice(0, 5);
+  const filteredOptions = () => text() > '' ? fuse.search(text()).map(el => el.item).slice(0, 5) : [];
 
   const isVisible = createMemo(() => {
     return show() && (filteredOptions().length > 1 || filteredOptions()[0] !== text());
@@ -60,7 +60,7 @@ const MovieSelect: Component<{
       // props.setGuess((prev) => prev.split(' ').slice(0, -1).join(' '));
     } else {
       setText(filteredOptions()[selected()]);
-      props.setGuess(sanitizeText(text()));
+      text() > '' ? props.setGuess(sanitizeText(text())) : props.setGuess(' ');
     }
   }
 

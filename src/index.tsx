@@ -4,8 +4,8 @@ import { Router, Route } from "@solidjs/router";
 
 import './index.css'
 import Intro from './intro'
-import Movies from './movies'
-import Actors from './actors'
+import Movies from './movies/movies'
+import Actors from './actors/actors'
 import colors from 'tailwindcss/colors'
 
 const colorArray = [
@@ -35,8 +35,8 @@ document.documentElement.style.setProperty('--ACCENT', accentColor[400] as strin
 const root = document.getElementById('root')
 render(() => (
     <Router>
-        <Route path="/" component={Intro} />
         <Route path="/movies" component={Movies} />
         <Route path="/actors" component={Actors} />
+        <Route path="/" component={Intro} />
     </Router>
 ), root!)
