@@ -142,7 +142,7 @@ export default () => {
       score += '⬛'
     }
 
-    let result = `🎭 Kino actors ﹟${day % actors.length + 1}\n${score}\n📼 https://www.kino.wtf/actors`
+    let result = `🎭 Kino actors ﹟${day % actors.length + 1}\n${score}\n📼 https://www.kino.wtf`
 
     // Check if the Share API is supported
     // if (navigator.share) {
