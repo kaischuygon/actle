@@ -3,9 +3,9 @@ import { render } from "solid-js/web";
 import { Router, Route } from "@solidjs/router";
 
 import './index.css'
-import Intro from './intro'
-import Movies from './movies'
-import Actors from './actors'
+import Intro from './assets/intro'
+import Movies from './assets/movies'
+import Actors from './assets/actors'
 import colors from 'tailwindcss/colors'
 
 const colorArray = [
@@ -38,5 +38,6 @@ render(() => (
         <Route path="/movies" component={Movies} />
         <Route path="/actors" component={Actors} />
         <Route path="/" component={Intro} />
+        <Route path="/:rest*" component={Intro} />
     </Router>
 ), root!)

@@ -1,5 +1,5 @@
-import Modal from "./components/modal"
-import Footer from "./components/footer"
+import Modal from "../components/modal"
+import Footer from "../components/footer"
 import AboutIcon from "~icons/bx/bxs-info-circle"
 
 export default () => {
