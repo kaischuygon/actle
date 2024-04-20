@@ -1,14 +1,14 @@
 import { Show, For, createEffect, on, onCleanup } from "solid-js"
 import { createSignal } from "solid-js";
 
-import Modal from "../components/modal"
-import CustomSelect from "../components/customSelect"
+import Modal from "./components/modal"
+import CustomSelect from "./components/customSelect"
 import AboutIcon from "~icons/bx/bxs-info-circle"
 import InfoIcon from "~icons/bx/bxs-book-open"
 import GitHubIcon from "~icons/bx/bxl-github"
 import ChartIcon from "~icons/bx/bx-bar-chart"
 
-import actors from '../../get_movies/actors.json'
+import actors from '../get_movies/actors.json'
 
 interface actorStats {
   gamesPlayed: number;
