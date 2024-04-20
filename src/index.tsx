@@ -3,9 +3,9 @@ import { render } from "solid-js/web";
 import { Router, Route } from "@solidjs/router";
 
 import './index.css'
-import Intro from './assets/intro'
-import Movies from './assets/movies'
-import Actors from './assets/actors'
+import Intro from './pages/intro'
+import Movies from './pages/movies'
+import Actors from './pages/actors'
 import colors from 'tailwindcss/colors'
 
 const colorArray = [
