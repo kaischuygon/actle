@@ -84,7 +84,7 @@ export default () => {
   // Save stats to localStorage whenever they change
   createEffect(() => {
     const stats = movieStats();
-    localStorage.setItem('gameStats', JSON.stringify(stats));
+    localStorage.setItem('gameStats', JSON.stringify(stats) == null ? '' : JSON.stringify(stats));
   });
 
   // Save state to localStorage

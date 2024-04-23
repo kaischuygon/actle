@@ -4,9 +4,10 @@
     Creates:
         movies.json - a JSON file containing the movie's name, year, URL, TMDb ID, actors, and poster
 
-
     Install dependencies:
-        pip install numpy requests python-dotenv tqdm
+        pip install -r requirements.txt
+
+    Ensure you have TMDB_API_TOKEN set in your environment variables
 
     Usage:
         python movies.py

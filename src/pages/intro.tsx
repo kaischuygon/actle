@@ -27,7 +27,7 @@ export default () => {
           <hr class="border-accent"/>
 
           <div class="flex flex-col gap-2">
-            <a href='/movies' class="w-full bg-primary-800 rounded flex gap-2 items-center no-underline p-2 hover:brightness-90">
+            <a href="/movies" class="w-full bg-primary-800 rounded flex gap-2 items-center no-underline p-2 hover:brightness-90">
                 <div class="text-6xl font-emoji">
                 🎞️
                 </div>
@@ -36,7 +36,7 @@ export default () => {
                     <div class="text-xs">Guess the movie from the castlist.</div>
                 </div>
             </a>
-            <a href='/actors' class="w-full bg-primary-800 rounded flex gap-2 items-center no-underline p-2 hover:brightness-90">
+            <a href="/actors" class="w-full bg-primary-800 rounded flex gap-2 items-center no-underline p-2 hover:brightness-90">
                 <div class="text-6xl font-emoji">
                 🎭
                 </div>
@@ -55,6 +55,7 @@ export default () => {
                 </div>
             </span>
           </div>
+          <hr class="border-accent" />
 
           <Footer />
         </div>

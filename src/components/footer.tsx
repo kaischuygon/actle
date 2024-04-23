@@ -3,7 +3,7 @@ import GitHubIcon from "~icons/bx/bxl-github"
 export default () => {
     return (
       <div class="flex flex-wrap text-xs text-primary-300 m-2 gap-2 justify-center">
-        <p>© 2023 <a target="_blank" href="https://kaischuyler.com">Kai Schuyler</a></p>
+        <p>© 2024 <a target="_blank" href="https://kaischuyler.com">Kai Schuyler</a></p>
         <span>·</span>
         <span>
           <span>☕️ </span>
