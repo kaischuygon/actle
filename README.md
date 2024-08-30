@@ -1,22 +1,50 @@
-## 📼 kino.wtf - Daily games for film buffs. 
+# React + TypeScript + Vite
 
-![kino.wtf](/public/social-image.png)
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-### About
-[kino.wtf](https://kino.wtf) is a collection of worlde-like games for movie buffs and casual moviegoers alike.
+Currently, two official plugins are available:
 
-### How to play
-- Use the hints provided to guess a film or actor.
-- If you guess incorrectly, another hint will be revealed.
-- Leave the input blank to skip a guess and get the next hint.
-- You have 6 attempts to guess the film or actor.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-### Credits
-- List of movies found using [TMDb API discover feature](https://developer.themoviedb.org/reference/discover-movie). 
-- List of actors comes from a modified version of [TOP 1000 ACTORS & ACTRESSES](https://www.imdb.com/list/ls524618334/) list on IMDb.
-- Metadata needed for each film scraped using the [TMDb API](https://developer.themoviedb.org/reference/intro/getting-started).
-- Inspired by [Wordle](https://www.nytimes.com/games/wordle/index.html), [Framed](https://framed.wtf) and [all the other spinoffs](https://rwmpelstilzchen.gitlab.io/wordles/).
+## Expanding the ESLint configuration
 
-### Tools used
-- Built using [solid.js](https://solidjs.com) and [tailwindcss](https://tailwindcss.com).
-- Deployed on [vercel](https://vercel.app).
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+
+- Configure the top-level `parserOptions` property like this:
+
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
+```
+
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
+
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
+```
