@@ -1,15 +1,12 @@
 import { ReactNode } from "react"
-import { marked } from "marked"
 
 type Props = ({
     "label": string,
     "icon": ReactNode,
-    "markdown": string
+    "children": ReactNode
 })
 
-export default function Modal({ label, icon, markdown }: Props) {
-    console.log(marked(markdown))
-
+export default function Modal({ label, icon, children }: Props) {
     return (
         <>
             {/* Open the modal using document.getElementById('ID').showModal() method */}
@@ -20,8 +17,7 @@ export default function Modal({ label, icon, markdown }: Props) {
                         {icon}
                         <span className="text-2xl">{label}</span>
                     </div>
-
-                    {markdown}
+                    {children}
 
                     <div className="modal-action">
                         <form method="dialog">

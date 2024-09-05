@@ -1,0 +1,14 @@
+[
+    {
+      "emoji": "🎭",
+      "name": "Actors",
+      "link": "/actors",
+      "description": "Guess the actor from the filmography."
+    },
+    {
+      "emoji": "🎞️",
+      "name": "Movies",
+      "link": "/movies",
+      "description": "Guess the movie from the castlist."
+    }
+]
