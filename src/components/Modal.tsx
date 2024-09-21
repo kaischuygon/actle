@@ -10,10 +10,12 @@ export default function Modal({ label, icon, children }: Props) {
     return (
         <>
             {/* Open the modal using document.getElementById('ID').showModal() method */}
-            <button className="btn" onClick={() => (document.getElementById(`${label}-modal`) as HTMLDialogElement).showModal()}>{icon}</button>
+            <div className="tooltip tooltip-bottom" data-tip={label}>
+                <button className="btn btn-ghost" onClick={() => (document.getElementById(`${label}-modal`) as HTMLDialogElement).showModal()}>{icon}</button>
+            </div>
             <dialog id={`${label}-modal`} className="modal modal-bottom sm:modal-middle">
                 <div className="modal-box prose">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 text-accent">
                         {icon}
                         <span className="text-2xl">{label}</span>
                     </div>

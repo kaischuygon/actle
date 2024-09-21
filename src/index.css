@@ -3,3 +3,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.border-xb {
+    @apply border-x-[1px] border-b-[1px] border-base-300 last-of-type:border-b-0
+}
+
+.prose {
+    a {
+        @apply text-secondary
+    }
+}
