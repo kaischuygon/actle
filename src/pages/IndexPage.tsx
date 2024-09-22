@@ -6,7 +6,7 @@ function IndexPage() {
     <Layout>
         {games.map(game => {
           return (
-            <div className="card lg:card-side bg-base-100 shadow-xl p-2" key={game.name}>
+            <div className="card card-side bg-base-100 shadow-xl p-2" key={game.name}>
               <figure className="text-[5em] font-emoji">
                 {game.emoji}
               </figure>
@@ -20,7 +20,7 @@ function IndexPage() {
             </div>
           )})
         }
-        <div className="card lg:card-side p-2">
+        <div className="card card-side p-2">
           <figure className="text-[5em] font-emoji">
             ⏳
           </figure>

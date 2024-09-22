@@ -5,11 +5,45 @@
 @tailwind utilities;
 
 .border-xb {
-    @apply border-x-[1px] border-b-[1px] border-base-300 last-of-type:border-b-0
+    @apply border-x-[1px] border-b-[1px] border-base-300 last-of-type:border-b-0;
 }
 
 .prose {
     a {
-        @apply text-secondary
+        @apply text-primary;
     }
+}
+
+.reactSelect-container, .reactSelect__value-container, .reactSelect__indicators, .reactSelect__singleValue {
+    * {
+        @apply !text-base-content !fill-base-content; 
+    }
+}
+
+.reactSelect__placeholder {
+    @apply brightness-75;
+}
+
+.reactSelect__control {
+    @apply !bg-base-100 !rounded-btn !shadow !text-primary-content !h-12;
+}
+
+.reactSelect__menu {
+    @apply !bg-base-200 !rounded-btn !shadow;
+}
+
+.reactSelect__menu-list {
+    @apply !text-base-content;
+}
+
+.reactSelect__option--is-focused {
+    @apply !text-base-content;
+}
+
+.reactSelect__option--is-selected {
+    @apply !text-primary-content;
+}
+
+.reactSelect__input-container {
+    @apply !text-base-content;
 }

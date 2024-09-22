@@ -5,7 +5,7 @@ export default function Footer() {
     const footer = [
         <span className="inline-flex gap-2">
           © 2024
-          <a href="https://kaischuyler.com" target="_blank">Kai Schuyler</a>
+          <a href="https://kaischuyler.com" target="_blank" className="link">Kai Schuyler</a>
         </span>,
         <span className="inline-flex gap-2 items-center">
           <span className="font-emoji">☕️</span>

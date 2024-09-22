@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { BsCaretDownFill } from "react-icons/bs";
+import { BsCaretDownFill, BsCaretUpFill } from "react-icons/bs";
 import { themeChange } from 'theme-change'
 
 export default function ThemeController() {
-    
     const themes = [
         "light",
         "dark",
@@ -39,21 +38,30 @@ export default function ThemeController() {
         "sunset",
     ]
 
-    const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('theme') || document.documentElement.getAttribute('data-theme'))
-
+    const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('theme') || 'theme')
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         themeChange(false)
         // 👆 false parameter is required for react project
     }, [])
 
+    const toggleDropdown = () => {
+        setIsOpen(!isOpen);
+    }
+
     return (
         <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn m-1">
-                <span className="truncate w-[4em]" >{currentTheme}</span>
-                <BsCaretDownFill />
+            <div 
+                tabIndex={0} 
+                role="button" 
+                className="btn"
+                onClick={toggleDropdown}
+            >
+                <span className="text-ellipsis overflow-hidden w-[4em] text-sm" >{currentTheme}</span>
+                {isOpen ? <BsCaretUpFill /> : <BsCaretDownFill />}
             </div>
-            <ul tabIndex={0} className="dropdown-content rounded-btn bg-base-200 z-50 w-52 p-2 shadow max-h-96 overflow-auto">
+            <ul tabIndex={0} className={`dropdown-content rounded-btn bg-base-200 z-50 w-52 p-2 shadow max-h-96 overflow-auto ${isOpen ? '' : 'hidden'}`}>
                 {themes.map(theme => {
                     return <li key={theme} aria-label={theme} value={theme}>
                         <input
@@ -61,7 +69,13 @@ export default function ThemeController() {
                             name="theme-dropdown"
                             className={`theme-controller btn btn-sm btn-block btn-ghost justify-start`}
                             aria-label={theme}
-                            value={theme} data-set-theme={theme} onClick={() => setCurrentTheme(theme)}/>
+                            value={theme} 
+                            data-set-theme={theme} 
+                            onClick={() => {
+                                setCurrentTheme(theme);
+                                setIsOpen(false);
+                            }}
+                        />
                     </li>
                 })}
             </ul>
