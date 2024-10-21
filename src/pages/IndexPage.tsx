@@ -6,26 +6,23 @@ function IndexPage() {
     <Layout>
         {games.map(game => {
           return (
-            <div className="card card-side bg-base-100 shadow-xl p-2" key={game.name}>
-              <figure className="text-[5em] font-emoji">
+            <a href={game.link} className="btn justify-start h-[8em] gap-2 shadow" key={game.name}>
+              <div className="text-[4em] font-emoji">
                 {game.emoji}
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title capitalize">{game.name}</h2>
-                <p>{game.description}</p>
-                <div className="card-actions justify-end">
-                  <a className="btn btn-primary" href={game.link}>Play now</a>
-                </div>
               </div>
-            </div>
+              <div className="prose text-left">
+                <h2 className="capitalize">{game.name}</h2>
+                <p>{game.description}</p>
+              </div>
+            </a>
           )})
         }
-        <div className="card card-side p-2">
-          <figure className="text-[5em] font-emoji">
+        <div className="btn btn-ghost hover:bg-transparent cursor-default justify-start h-[8em] gap-2">
+          <div className="text-[4em] font-emoji">
             ⏳
-          </figure>
-          <div className="card-body prose">
-            <h2 className="card-title capitalize">More coming soon</h2>
+          </div>
+          <div className="prose text-left">
+            <h2 className="capitalize">More coming soon</h2>
             <p>Check back soon for new puzzles! <a href="https://github.com/kaischuygon/kino.wtf/issues" target="_blank">Any suggestions?</a></p>
           </div>
         </div>
@@ -33,4 +30,4 @@ function IndexPage() {
   )
 }
 
-export default IndexPage
+export default IndexPage;

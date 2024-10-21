@@ -4,14 +4,13 @@ import Footer from "../layout/Footer"
 
 interface LayoutProps {
     children: ReactNode;
-    modals?: ReactNode[];
 }
 
-const Layout: React.FC<LayoutProps> = ({ modals, children }) => {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
     return (
         <div className="max-w-screen-sm mx-auto grid grid-rows-[0fr_1fr_0fr] min-h-screen">
             <div className="border-xb">
-                <Navbar modals={modals} />
+                <Navbar />
             </div>
             <div className="border-xb flex flex-col gap-2 p-2">
                 {children}
